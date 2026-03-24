@@ -4,7 +4,6 @@
     <title>Contact Us - Prime Vault</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="BrvimcaHe6IUJUmm9XCNgRVfly8N96DyGBHS2lWl">
     <meta name="robots" content="index, follow">
     <meta name="apple-mobile-web-app-title" content="Prime Vault">
     <meta name="application-name" content="Prime Vault">
@@ -515,8 +514,8 @@
             <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a Message</h2>
                 
-                <form action="http://firstchartereredbnk.com/homesendcontact" method="POST" class="space-y-6">
-                    <input type="hidden" name="_token" value="BrvimcaHe6IUJUmm9XCNgRVfly8N96DyGBHS2lWl">                    <div class="grid md:grid-cols-2 gap-6">
+             <form id="contact-form" class="space-y-6">            
+                       <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
                             <input type="text" id="name" name="name" required 
@@ -578,7 +577,7 @@
                         </div>
                         <div>
                             <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
-                            <p class="text-gray-600 dark:text-gray-300"></p>
+                            <p class="text-gray-600 dark:text-gray-300">......</p>
                             <p class="text-sm text-gray-500 dark:text-gray-400">Response within 24 hours</p>
                         </div>
                     </div>
@@ -1128,5 +1127,4 @@ window.smartsupp||(function(d) {
 
 
 </body>
-
 </html>

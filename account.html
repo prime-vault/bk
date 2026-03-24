@@ -4,7 +4,6 @@
     <title>Create Account - Prime Vault</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="BrvimcaHe6IUJUmm9XCNgRVfly8N96DyGBHS2lWl">
     <meta name="robots" content="index, follow">
     <meta name="apple-mobile-web-app-title" content="Prime Vault">
     <meta name="application-name" content="Prime Vault">
@@ -515,6 +514,111 @@
             100% { left: 100%; }
         }
     </style>
+
+ <!-- Firebase Compat SDKs – keep these exactly as-is -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<!-- Consolidated & defensive Firebase init + globals -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVyyL243cxKqYYfSiBBpEBiCs3I4iVlHw",
+    authDomain: "prime-vault-bf73d.firebaseapp.com",
+    projectId: "prime-vault-bf73d",
+    storageBucket: "prime-vault-bf73d.firebasestorage.app",
+    messagingSenderId: "317063080962",
+    appId: "1:317063080962:web:875faaeb6ee2af9b3ccb1b",
+    measurementId: "G-FSNK0T2ZD3"
+  };
+
+  // Wait until Firebase is actually loaded (very important in some browsers)
+  function initializeFirebase() {
+    if (typeof firebase === 'undefined') {
+      console.error("Firebase SDK failed to load – check network or adblocker");
+      return;
+    }
+
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log("Firebase initialized");
+      }
+
+      window.auth = firebase.auth();
+      window.db   = firebase.firestore();
+
+      // Quick validation
+      if (window.auth && window.db) {
+        console.log("auth and db globals are now available");
+      } else {
+        console.error("auth or db is still falsy after init");
+      }
+    } catch (err) {
+      console.error("Firebase setup failed:", err.message);
+    }
+  }
+
+
+  initializeFirebase();
+  setTimeout(initializeFirebase, 300); // small delay safety net
+</script>
+
+<!-- Alpine – defer is fine, but we now wait for auth inside components -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+
+<script>
+// Handle login form submission
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault(); // ← stops page reload
+
+    const email    = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const btn      = document.getElementById("login-btn");
+    const btnText  = document.getElementById("login-btn-text");
+
+    if (!email || !password) {
+        alert("Please enter email and password");
+        return;
+    }
+
+    btn.disabled = true;
+    btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Signing in...';
+
+    try {
+        const userCredential = await window.firebaseExports.signInWithEmailAndPassword(
+            window.auth,
+            email,
+            password
+        );
+
+        // Success - redirect to dashboard
+        console.log("Logged in:", userCredential.user.email);
+        window.location.href = "dashboard.html"; // ← change to your real dashboard path
+
+    } catch (error) {
+        let message = "Login failed. Please check your credentials.";
+        
+        if (error.code === "auth/wrong-password") {
+            message = "Incorrect password.";
+        } else if (error.code === "auth/user-not-found") {
+            message = "No account found with this email.";
+        } else if (error.code === "auth/invalid-email") {
+            message = "Invalid email format.";
+        } else if (error.code === "auth/too-many-requests") {
+            message = "Too many attempts. Try again later.";
+        }
+
+        alert(message);
+        console.error("Login error:", error.code, error.message);
+    } finally {
+        btn.disabled = false;
+        btnText.innerHTML = '<i class="fas fa-sign-in-alt mr-2 group-hover:translate-x-1 transition-transform text-sm"></i><span>Sign In to Account</span>';
+    }
+});
+</script>
+
 </head>
 
 <body class="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen">
@@ -712,8 +816,8 @@
                 
                 <!-- Form Container -->
                 <div class="px-6 pb-6 pt-4">
-                    <form action="account.html" method="post" id="registration-form">
-                        <input type="hidden" name="_token" value="BrvimcaHe6IUJUmm9XCNgRVfly8N96DyGBHS2lWl">                        
+                    <form id="registration-form" class="space-y-6">
+                                                
                         <!-- Step 1: Personal Information -->
                         <div id="step-1" class="step-content">
                             <div class="text-center mb-4">
@@ -1305,7 +1409,7 @@
                     <div class="mt-6 text-center">
                         <p class="text-sm text-gray-600 dark:text-gray-400">
                             Already have an account? 
-                            <a href="hlogin.html" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors">
+                            <a href="login.html" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors">
                                 Sign In
                             </a>
                         </p>
@@ -1606,5 +1710,160 @@
         z-index: 10;
     }
 </style>
+
+
+<script>
+// ── Registration form submit handler ──
+$(document).ready(function() {
+  const form = $('#registration-form');
+
+  form.on('submit', async function(e) {
+    e.preventDefault();
+
+    // Get form values
+    const firstName          = $('#name').val().trim();
+    const lastName           = $('#lastname').val().trim();
+    const username           = $('#username').val().trim();
+    const email              = $('#email').val().trim().toLowerCase();
+    const password           = $('#password').val();
+    const confirm            = $('#password_confirmation').val();
+    const phone              = $('#phone').val().trim();
+    const country            = $('#country').val();
+    const currency           = $('#curr').val();
+    const currencySymbol     = $('#s_curr').val();
+    const accountType        = $('#accounttype').val();
+    const transactionPin     = $('#pin').val();
+
+    // Final client-side checks
+    if (password !== confirm) {
+      alert("Passwords do not match.");
+      return;
+    }
+    if (password.length < 8) {   // increased minimum — good practice
+      alert("Password should be at least 8 characters long.");
+      return;
+    }
+    if (transactionPin.length !== 4) {
+      alert("Transaction PIN must be exactly 4 digits.");
+      return;
+    }
+
+    const submitBtn = $('#submit-btn');
+    const originalHTML = submitBtn.html();
+
+    submitBtn
+      .prop('disabled', true)
+      .html('<i class="fas fa-spinner fa-spin mr-2"></i> Creating account...');
+
+    try {
+      // 1. Create Firebase Auth user
+      const userCredential = await window.auth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // 2. Update display name
+      await user.updateProfile({
+        displayName: `${firstName} ${lastName}`.trim()
+      });
+
+      // 3. Generate unique account number
+      const accountNumber = await generateUniqueAccountNumber();
+
+      // 4. Save user profile + account number + other data
+      await window.db.collection("users").doc(user.uid).set({
+          firstName,
+          lastName,
+          fullName: `${firstName} ${lastName}`.trim(),
+          username,
+          email,
+          phone,
+          country,
+          preferredCurrency: currency,
+          currencySymbol,
+          accountType,
+          transactionPinHash: btoa(transactionPin), // ← very basic — in production use proper hashing!
+          accountNumber,           // ← the important line
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          status: "pending",       // you can use this for KYC later
+          kycVerified: false
+        });
+
+      console.log("Account created successfully!", {
+        uid: user.uid,
+        email: user.email,
+        accountNumber
+      });
+
+      alert("Account created successfully!\nWelcome to Prime Vault!");
+
+      // Redirect to dashboard (or login if you prefer email verification first)
+      window.location.href = "dashboard.html";
+
+    } catch (error) {
+      console.error("Registration failed:", error.code, error.message);
+
+      let msg = "Failed to create account. Please try again.";
+
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          msg = "This email is already registered.";
+          break;
+        case 'auth/invalid-email':
+          msg = "Invalid email format.";
+          break;
+        case 'auth/weak-password':
+          msg = "Password is too weak. Use at least 8 characters with letters, numbers, and symbols.";
+          break;
+        case 'auth/operation-not-allowed':
+          msg = "Sign-up is currently disabled. Contact support.";
+          break;
+        default:
+          msg = error.message || msg;
+      }
+
+      alert(msg);
+    } finally {
+      submitBtn
+        .prop('disabled', false)
+        .html(originalHTML);
+    }
+  });
+
+  // ── Unique 10-digit account number generator ──
+  async function generateUniqueAccountNumber() {
+    let attempts = 0;
+    const maxAttempts = 25;
+
+    while (attempts < maxAttempts) {
+      // Format example: 9xxxxxxxxx  (starts with 9 — common in some banking systems)
+      const number = "9" + Math.floor(100000000 + Math.random() * 900000000);
+
+      // Check if already used
+      const querySnapshot = await window.db
+        .collection("users")
+        .where("accountNumber", "==", number)
+        .limit(1)
+        .get();
+
+      if (querySnapshot.empty) {
+        return number;
+      }
+
+      attempts++;
+      console.warn(`Account number collision — retrying (${attempts}/${maxAttempts})`);
+    }
+
+    // Very unlikely fallback
+    console.error("Could not generate unique account number after many attempts");
+    return "9" + Date.now().toString().slice(-9); // still quite unique
+  }
+});
+</script>
+
+
+
 </body>
 </html>

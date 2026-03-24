@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prime Vault | Individual Grant Application</title>
+    <meta name="description" content="Swift and Secure Money Transfer to any UK bank account will become a breeze with Prime Vault." />
+    <link rel="shortcut icon" href="images/primevault.png" />
+    
+    
+    <!-- Tailwind CSS with custom color variables -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { // Dynamic primary colors from appearance settings
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            DEFAULT: '#0ea5e9',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            foreground: '#ffffff',
+                        },
+                        secondary: { // Dynamic secondary colors from appearance settings
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            DEFAULT: '#64748b',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            foreground: '#0f172a',
+                        },
+                        accent: { // Dynamic accent colors from appearance settings
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            DEFAULT: '#ec4899',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            foreground: '#ffffff',
+                        },
+                        background: '#f8fafc',
+                        foreground: '#1e293b',
+                        card: {
+                            DEFAULT: '#ffffff',
+                            foreground: '#1e293b',
+                        },
+                        muted: {
+                            DEFAULT: '#f1f5f9',
+                            foreground: '#64748b',
+                        },
+                        border: '#e2e8f0',
+                        input: '#e2e8f0',
+                        ring: '#0ea5e9',
+                        
+                        // Specific colors from original design for gradients/highlights
+                        'gradient-pink-from': '#ec4899',
+                        'gradient-purple-via': '#a855f7',
+                        'gradient-indigo-to': '#4f46e5',
+                        
+                        'mobile-header-bg': '#1e293b', // Dark slate for mobile top section
+                        'mobile-header-text': '#f1f5f9', // Light text for mobile top section
+                        
+                        'yellow-action': '#facc15',
+                        'green-positive': '#22c55e',
+                        'red-negative': '#ef4444',
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+                        'top': '0 -4px 12px -1px rgba(0,0,0,0.05), 0 -2px 8px -1px rgba(0,0,0,0.03)',
+                    },
+                    borderRadius: {
+                        lg: '0.75rem',
+                        xl: '0.75rem', 
+                        '2xl': '1rem',
+                        '3xl': '1.5rem',
+                    },
+                    keyframes: {
+                        pulse: {
+                          '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(14, 165, 233, 0.4)' }, // primary color
+                          '50%': { transform: 'scale(1.05)', boxShadow: '0 0 0 10px rgba(14, 165, 233, 0)' },
+                        },
+                        shine: { 
+                          '0%': { transform: 'translateX(-100%) translateY(-100%) rotate(45deg)' },
+                          '100%': { transform: 'translateX(100%) translateY(100%) rotate(45deg)' },
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 2.5s infinite',
+                        'shine-once': 'shine 1.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    
+        
+        
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome 6 Pro -->
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aquawolf04/font-awesome-pro@5cd1511/css/all.css">
+    
+    <!-- External Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: theme('colors.background');
+            color: theme('colors.foreground');
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; } /* slate-200 */
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; } /* slate-400 */
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; } /* slate-500 */
+
+        .dark ::-webkit-scrollbar-track { background: #374151; } /* gray-700 */
+        .dark ::-webkit-scrollbar-thumb { background: #6b7280; } /* gray-500 */
+        .dark ::-webkit-scrollbar-thumb:hover { background: #9ca3af; } /* gray-400 */
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; } /* slate-300 */
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; } /* slate-400 */
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #6b7280; } /* gray-500 */
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; } /* gray-400 */
+
+        .shine-effect-container { position: relative; overflow: hidden; }
+        .shine-effect {
+            position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: rotate(45deg); opacity: 0; transition: opacity 0.5s;
+        }
+        .shine-effect-container:hover .shine-effect { opacity: 1; animation: shine-once 1.5s ease-in-out; }
+
+        .fade-in-section { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in-section.is-visible { opacity: 1; transform: translateY(0); }
+
+        .notification-bell--alert {
+            animation: bell-shake 1.2s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        .notification-dot {
+            animation: dot-blink 1.4s ease-in-out infinite;
+        }
+
+        @keyframes  bell-shake {
+            0%, 100% { transform: rotate(0deg); }
+            15% { transform: rotate(10deg); }
+            30% { transform: rotate(-10deg); }
+            45% { transform: rotate(8deg); }
+            60% { transform: rotate(-8deg); }
+            75% { transform: rotate(4deg); }
+        }
+
+        @keyframes  dot-blink {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .translate-widget .goog-te-gadget {
+            font-size: 0;
+        }
+
+        .translate-widget .goog-te-combo {
+            font-size: 12px;
+            line-height: 1;
+            border-radius: 9999px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #0f172a;
+            min-width: 160px;
+            outline: none;
+        }
+
+        .dark .translate-widget .goog-te-combo {
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0;
+            border-color: rgba(71, 85, 105, 0.6);
+        }
+
+        .translate-widget.is-mobile .goog-te-combo {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .translate-widget.small .goog-te-combo {
+            font-size: 11px;
+            padding: 6px 8px;
+            min-width: 120px;
+        }
+
+        .goog-logo-link,
+        .goog-te-gadget span {
+            display: none !important;
+        }
+
+        .goog-te-banner-frame,
+        .goog-te-banner,
+        .goog-te-balloon-frame,
+        #goog-gt-tt,
+        .goog-te-balloon-frame *,
+        .goog-te-balloon-frame ~ .goog-tooltip,
+        .goog-tooltip,
+        .goog-te-banner * {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+    </style>
+    
+    <!-- Ultra Modern Loading Animation -->
+    <style>
+        .page-loading {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: all .6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.08) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 1) 100%);
+            backdrop-filter: blur(2px);
+            visibility: hidden;
+            z-index: 9999;
+        }
+        
+        .dark .page-loading {
+            background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.12) 0%, rgba(17, 24, 39, 0.95) 50%, rgba(17, 24, 39, 1) 100%);
+        }
+        .page-loading.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .page-loading-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        .page-loading.active>.page-loading-inner {
+            opacity: 1;
+        }
+        
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* Floating particles background */
+        .loading-particles {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #0ea5e9, #4f46e5);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatParticle 4s ease-in-out infinite;
+        }
+        
+        .particle:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 80%; left: 80%; animation-delay: 0.5s; }
+        .particle:nth-child(3) { top: 60%; left: 20%; animation-delay: 1s; }
+        .particle:nth-child(4) { top: 30%; left: 70%; animation-delay: 1.5s; }
+        .particle:nth-child(5) { top: 70%; left: 30%; animation-delay: 2s; }
+        .particle:nth-child(6) { top: 10%; left: 60%; animation-delay: 2.5s; }
+        
+        .loading-animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            position: relative;
+            filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.2));
+        }
+        
+        /* Outer orbital rings */
+        .loading-animation .orbit-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(14, 165, 233, 0.2);
+            animation: rotateOrbit 8s linear infinite;
+        }
+        
+        .orbit-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            border-top: 2px solid #0ea5e9;
+            border-right: 2px solid rgba(14, 165, 233, 0.3);
+            animation-duration: 2s;
+        }
+        
+        .orbit-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-bottom: 2px solid #0ea5e9;
+            border-left: 2px solid rgba(14, 165, 233, 0.3);
+            animation-duration: 2.5s;
+            animation-direction: reverse;
+        }
+        
+        .orbit-ring:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border-top: 2px solid #0ea5e9;
+            border-right: 2px solid rgba(14, 165, 233, 0.3);
+            animation-duration: 3s;
+        }
+        
+        /* Inner spinning circles */
+        .loading-animation .inner-circle {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #0ea5e9;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.6);
+            animation: spinInner 2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        
+        .inner-circle:nth-child(4) {
+            border-top: 3px solid #0ea5e9;
+            border-right: 3px solid rgba(14, 165, 233, 0.4);
+            animation-delay: 0s;
+        }
+        
+        .inner-circle:nth-child(5) {
+            border-bottom: 3px solid #0ea5e9;
+            border-left: 3px solid rgba(14, 165, 233, 0.4);
+            animation-delay: 0.3s;
+            animation-direction: reverse;
+        }
+        
+        /* Glowing core with morphing effect */
+        .loading-animation .core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #0ea5e9, #4f46e5);
+            background-size: 200% 200%;
+            box-shadow: 
+                0 0 20px rgba(14, 165, 233, 0.6),
+                0 0 40px rgba(14, 165, 233, 0.3),
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: coreGlow 2s ease-in-out infinite, morphCore 4s ease-in-out infinite;
+        }
+        
+        /* Enhanced text with multiple effects */
+        .page-loading .text {
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            position: relative;
+            background: linear-gradient(90deg, #0ea5e9, #0ea5e9, #4f46e5, #0ea5e9, #0ea5e9);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShimmer 3s linear infinite;
+            text-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+        }
+        
+        .page-loading .text::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, transparent, rgba(14, 165, 233, 0.1), transparent);
+            border-radius: 4px;
+            z-index: -1;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+        
+        /* Subtitle with fade effect */
+        .page-loading .subtitle {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            letter-spacing: 0.05em;
+            animation: subtitleFade 2s ease-in-out infinite;
+        }
+        
+        /* Progress indicator */
+        .loading-progress {
+            width: 200px;
+            height: 2px;
+            background: #f1f5f9;
+            border-radius: 1px;
+            margin-top: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading-progress::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #0ea5e9, transparent);
+            animation: progressSlide 2s ease-in-out infinite;
+        }
+        
+        /* Keyframe animations */
+        @keyframes  floatParticle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+        
+        @keyframes  rotateOrbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes  spinInner {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        @keyframes  coreGlow {
+            0% { 
+                transform: translate(-50%, -50%) scale(0.8); 
+                box-shadow: 
+                    0 0 20px rgba(14, 165, 233, 0.6),
+                    0 0 40px rgba(14, 165, 233, 0.3),
+                    inset 0 0 10px rgba(255, 255, 255, 0.3);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.2); 
+                box-shadow: 
+                    0 0 30px rgba(14, 165, 233, 0.8),
+                    0 0 60px rgba(14, 165, 233, 0.4),
+                    inset 0 0 15px rgba(255, 255, 255, 0.5);
+            }
+        }
+        
+        @keyframes  morphCore {
+            0%, 100% { border-radius: 50%; background-position: 0% 50%; }
+            25% { border-radius: 40%; background-position: 100% 50%; }
+            50% { border-radius: 30%; background-position: 0% 50%; }
+            75% { border-radius: 40%; background-position: 100% 50%; }
+        }
+        
+        @keyframes  textShimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes  textGlow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+        
+        @keyframes  subtitleFade {
+            0%, 100% { opacity: 0.5; transform: translateY(0px); }
+            50% { opacity: 1; transform: translateY(-2px); }
+        }
+        
+        @keyframes  progressSlide {
+            0% { left: -100%; }
+            50% { left: 0%; }
+            100% { left: 100%; }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        .dark ::-webkit-scrollbar-track {
+            background: #374151;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb {
+            background: #6b7280;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>    
+
+<script src="firebase.js"></script>
+
+<script src="auth-init.js" defer></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+
+    </head>
+
+<body class="bg-background text-foreground">
+    <!-- Ultra Modern Page Loader -->
+    <div class="page-loading active">
+        <div class="page-loading-inner">
+            <div class="loading-container">
+                <!-- Floating particles background -->
+                <div class="loading-particles">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+                
+                <!-- Main loading animation -->
+                <div class="loading-animation">
+                    <!-- Outer orbital rings -->
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    
+                    <!-- Inner spinning circles -->
+                    <div class="inner-circle"></div>
+                    <div class="inner-circle"></div>
+                    
+                    <!-- Morphing glowing core -->
+                    <div class="core"></div>
+                </div>
+                
+                <!-- Enhanced text with effects -->
+                <div class="text">Prime Vault</div>
+                <div class="subtitle">Secure Banking Platform</div>
+            </div>
+        </div>
+    </div>
+    
+    
+<div x-data="{
+    sidebarOpen: false,
+    mobileMenuOpen: false,
+    notificationOpen: false,
+    userDropdownOpen: false,
+    currentRoute: 'accounthistory',
+    darkMode: localStorage.getItem('darkMode') === 'true' || false,
+
+    userDisplayName: 'Guest',
+    userEmail: '',
+    userPhotoURL: '',
+
+    toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },
+    closeSidebar() { this.sidebarOpen = false; },
+    isActiveRoute(route) { return this.currentRoute === route; },
+
+    toggleNotifications() {
+        this.notificationOpen = !this.notificationOpen;
+        this.userDropdownOpen = false;
+    },
+
+    toggleUserDropdown() {
+        this.userDropdownOpen = !this.userDropdownOpen;
+        this.notificationOpen = false;
+    },
+
+    closeDropdowns() {
+        this.notificationOpen = false;
+        this.userDropdownOpen = false;
+    },
+
+    toggleDarkMode() {
+        this.darkMode = !this.darkMode;
+        localStorage.setItem('darkMode', this.darkMode);
+        if (this.darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    },
+
+    initDarkMode() {
+        if (this.darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    },
+
+    initUser() {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                this.userDisplayName = user.displayName || user.email?.split('@')[0] || 'User';
+                this.userEmail = user.email || 'No email';
+                this.userPhotoURL = user.photoURL || '';
+
+                console.log('User loaded:', this.userDisplayName, this.userEmail);
+            } else {
+                this.userDisplayName = 'Guest';
+                this.userEmail = '';
+                this.userPhotoURL = '';
+                // Optional: redirect to login
+                // window.location.href = '/login.html';
+            }
+        });
+    },
+
+    // Helper for two-letter initials
+    getInitials(name) {
+        if (!name || name.trim() === '') return '??';
+        const words = name.trim().split(/\s+/).filter(w => w.length > 0);
+        if (words.length === 0) return '??';
+        if (words.length === 1) {
+            return (words[0].charAt(0) + (words[0].charAt(1) || '')).toUpperCase();
+        }
+        return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+    }
+}"
+x-init="initDarkMode(); initUser();"
+@click.away="closeDropdowns()"
+class="min-h-screen bg-gray-50 dark:bg-gray-900">
+
+                <!-- Desktop Layout -->
+        <div class="flex h-screen">
+            <!-- Desktop Sidebar -->
+            <div class="w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 flex flex-col shadow-xl">
+                <!-- Logo Section -->
+                <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-full">
+                            <img src="images/primevault.png" alt="Prime Vault" class="h-12 w-auto">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 px-4 py-6 space-y-6 overflow-y-auto custom-scrollbar">
+                                                        
+                                            <div class="mb-8">
+                            <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-4">Main</h3>
+                            <div class="space-y-2">
+                                                                    <a href="dashboard.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-house text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Dashboard</span>
+                                                                            </a>
+                                                                    <a href="accounthistory.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-chart-line text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Transactions</span>
+                                                                            </a>
+                                                                    <a href="cardsection.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-credit-card text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Cards</span>
+                                                                            </a>
+                                                        </div>
+                    </div>
+                                            <div class="mb-8">
+                            <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-4">Transfers</h3>
+                            <div class="space-y-2">
+                                                                    <a href="localtransfer.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-paper-plane text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Local Transfer</span>
+                                                                            </a>
+                                                                    <a href="internationaltransfer.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-globe text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">International</span>
+                                                                            </a>
+                                                                    <a href="deposit.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-plus text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Deposit</span>
+                                                                            </a>
+                                                                    <a href="swap.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-arrows-rotate text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Currency Swap</span>
+                                                                            </a>
+                                                        </div>
+                    </div>
+                                            <div class="mb-8">
+                            <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-4">Services</h3>
+                            <div class="space-y-2">
+                                                                    <a href="loan.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-landmark text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Loans</span>
+                                                                            </a>
+                                                                    <a href="irs-refund.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-receipt text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Tax Refund</span>
+                                                                            </a>
+                                                                    <a href="grant-application.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-hand-holding-dollar text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Grants</span>
+                                                                            </a>
+                                                        </div>
+                    </div>
+                                            <div class="mb-8">
+                            <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-4">Account</h3>
+                            <div class="space-y-2">
+                                                                    <a href="account-settings.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-gear text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Settings</span>
+                                                                            </a>
+                                                                    <a href="support.html" 
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
+                                            <i class="fa-solid fa-headset text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                </div>
+                                        <span class="font-semibold">Support</span>
+                                                                            </a>
+                                                        </div>
+                    </div>
+                                    </nav>
+
+                <!-- User Profile Section -->
+    <div class="p-4 border-t border-gray-200/50 dark:border-gray-700/50">
+        <div class="flex items-center space-x-4 p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border border-gray-200/50 dark:border-gray-700/50">
+            <div class="relative">
+                <!-- Dynamic Avatar: Photo if available, otherwise first letter of name -->
+                <div class="h-10 w-10 rounded-full overflow-hidden bg-primary-500 flex items-center justify-center text-white font-bold border-2 border-primary-100">
+                    <template x-if="userPhotoURL">
+                        <img :src="userPhotoURL" alt="Profile" class="w-full h-full object-cover">
+                    </template>
+                    <template x-if="!userPhotoURL">
+                    <span x-text="getInitials(userDisplayName)"></span>
+                    </template>
+                </div>
+                <!-- Online status dot -->
+                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-600"></div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 truncate" x-text="userEmail || 'Not logged in'"></p>
+            </div>
+                                
+                                                
+                            <!-- Working Logout Button -->
+            <button 
+                @click="auth.signOut().then(() => {
+                    console.log('Signed out successfully');
+                    window.location.href = '/login.html';  // ← change to your actual login page path
+                }).catch((error) => {
+                    console.error('Logout error:', error);
+                    alert('Logout failed: ' + error.message);
+                })"
+                type="button"
+                id="submit-btn"
+                class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors flex items-center justify-center">
+                <i class="fa-solid fa-right-from-bracket text-sm"></i>
+            </button>
+                        </form>
+            </div>
+        </div>
+                    </div>
+                    
+            <!-- Desktop Main Content -->
+            <div class="flex-1 flex flex-col">
+                <!-- Desktop Header -->
+                <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 shadow-sm relative z-50">
+                    <div class="flex items-center justify-between">
+                        <!-- Page Title & Breadcrumb -->
+                    <div class="flex items-center space-x-4">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                        Dashboard                                </h1>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    Welcome, <span x-text="userDisplayName.split(' ')[0] || 'Guest'"></span>
+                            </p> 
+                        </div>
+                    </div>
+                    
+                        <!-- Header Actions -->
+                    <div class="flex items-center space-x-4">
+                            <!-- Dark Mode Toggle -->
+                            <button @click="toggleDarkMode()" 
+                                    class="w-11 h-11 bg-gray-50 hover:bg-primary-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-2xl flex items-center justify-center transition-colors group">
+                                <i x-show="!darkMode" class="fa-solid fa-moon text-gray-600 group-hover:text-primary-600 dark:text-gray-300 transition-colors"></i>
+                                <i x-show="darkMode" class="fa-solid fa-sun text-yellow-500 group-hover:text-yellow-400 transition-colors"></i>
+                            </button>
+
+                            <!-- Notifications -->
+                                                        <div class="relative">
+                                <button @click="toggleNotifications()" 
+                                        class="relative w-11 h-11 bg-gray-50 hover:bg-primary-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-2xl flex items-center justify-center transition-colors group">
+                                    <i class="fa-solid fa-bell text-gray-600 group-hover:text-primary-600 dark:text-gray-300 dark:group-hover:text-primary-400 transition-colors "></i>
+                                                                    </button>
+                            
+                                <!-- Notifications Dropdown -->
+                                <div x-show="notificationOpen" 
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-1 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-1 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 z-[99999]">
+                                    <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+                                    <div class="flex items-center justify-between">
+                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Notifications</h3>
+                                                                                                                            </div>
+                                </div>
+                                    <div class="max-h-96 overflow-y-auto custom-scrollbar">
+                                        <!-- Notification Items -->
+                                                                        
+                                                                            <div class="p-6 text-center">
+                                            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                <i class="fa-solid fa-bell-slash text-gray-400 dark:text-gray-500 text-xl"></i>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No notifications yet</p>
+                                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">We'll notify you when something happens</p>
+                                        </div>
+                                                                    </div>
+                                    <div class="p-4 border-t border-gray-100 dark:border-gray-700">
+                                        <div class="flex items-center justify-between">
+                                            <button class="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+                                                Mark all as read
+</button>
+                                            <a href="notifications.html" class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+                                                View All Notifications
+                                            </a>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+          <!-- User Dropdown -->
+                        <div class="relative inline-block">
+                            <button @click="toggleUserDropdown()"
+                                    class="flex items-center space-x-3 p-2 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                                <!-- Avatar -->
+                                <div class="relative h-10 w-10 rounded-full overflow-hidden border-2 border-primary-100">
+                                    <template x-if="userPhotoURL">
+                                        <img :src="userPhotoURL" alt="Profile" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!userPhotoURL">
+                                        <div class="w-full h-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg">
+                                            <span x-text="getInitials(userDisplayName)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Name & Email (hidden on mobile) -->
+                                <div class="hidden md:block text-left">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400" x-text="userEmail"></p>
+                                </div>
+
+                                <!-- Chevron -->
+                                <i class="fa-solid fa-chevron-down text-gray-400 dark:text-gray-500 text-sm group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                            </button>
+                                   
+                    
+                                <!-- User Dropdown Menu -->
+                                <div x-show="userDropdownOpen" 
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-1 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-1 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute right-0 mt-2 w-72 origin-top-right bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 z-[9999] overflow-hidden focus:outline-none">
+                                
+                                <!-- User Info Header -->
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold border-2 border-primary-100">
+                                            <span x-text="getInitials(userDisplayName)"></span>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="userDisplayName"></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400" x-text="userEmail"></p>
+                                        </div>
+                                    </div>
+                            
+                            <!-- KYC Verification Status -->
+                                        <div class="mt-3">
+                                                                            <a href="verify-account.html" class="flex items-center justify-center py-2 rounded-xl bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
+                                                    <span class="text-xs text-red-800 dark:text-red-300 font-semibold flex items-center">
+                                                        <i class="fa-solid fa-exclamation-triangle text-red-600 dark:text-red-400 mr-2"></i> Verify KYC
+                                                    </span>
+                                                </a>
+                                                    </div>
+                    </div>
+                                    <div class="p-2">
+                                        <div class="translate-widget small mb-2 hidden md:block">
+                                            <div class="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">
+                                                <i class="fa-solid fa-globe"></i>
+                                                Translate
+                                            </div>
+                                            <div id="google_translate_element_desktop"></div>
+                                        </div>
+                                        <a href="account-settings.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
+                                            <div class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors">
+                                                <i class="fa-solid fa-user text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors text-sm"></i>
+                                    </div>
+                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Profile Settings</span>
+                                        </a>
+                                        <a href="support.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
+                                            <div class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors">
+                                                <i class="fa-solid fa-headset text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors text-sm"></i>
+                                </div>
+                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Help & Support</span>
+                                        </a>
+                                        <div class="border-t border-gray-100 dark:border-gray-700 my-2"></div>
+                                        <button
+                                        @click="auth.signOut().then(() => { window.location.href = '/login.html'; }).catch(err => alert('Logout failed: ' + err.message))"
+                                        type="button"
+                                        class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors group">
+                                        <div class="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center group-hover:bg-red-200 dark:group-hover:bg-red-900/50 transition-colors">
+                                            <i class="fa-solid fa-right-from-bracket text-red-500 dark:text-red-400 text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium text-red-600 dark:text-red-400">Sign Out</span>
+                                    </button>
+                                        </form>
+                            </div>
+                                </div>
+                            </div>
+                                </div>
+                            </div>
+                </header>
+
+                <!-- Main Content -->
+                <main class="flex-1 bg-gray-50 dark:bg-gray-900 min-h-0">
+                    <div class="h-full overflow-y-auto">
+                        <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-3 lg:p-4">
+    <div class="max-w-8xl mx-auto">
+        <!-- Alerts -->
+                        
+        <!-- Mobile Header -->
+        <div class="lg:hidden mb-2">
+            <div class="lg:hidden" x-data="{ showMobileNotifications: false }">
+    <!-- Header Section -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-2">
+                            <!-- Back Button -->
+                <a href="grant-application.html" class="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 mr-2">
+                    <i class="fa-solid fa-arrow-left text-gray-700 dark:text-gray-300 text-base"></i>
+                </a>
+                        
+            <div>
+                                    <!-- Custom Title -->
+                    <p class="text-gray-900 dark:text-white font-semibold text-base">Individual Grant</p>
+                            </div>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+                            <!-- Dark Mode Toggle -->
+                <button @click="toggleDarkMode()" 
+                        class="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i x-show="!darkMode" class="fa-solid fa-moon text-gray-700 text-base"></i>
+                    <i x-show="darkMode" class="fa-solid fa-sun text-yellow-400 text-base"></i>
+                </button>
+                        
+                            <!-- Notifications -->
+                                <div class="relative">
+                    <button @click="showMobileNotifications = !showMobileNotifications" class="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <i class="fa-solid fa-bell text-gray-700 dark:text-gray-300 text-base "></i>
+                    </button>
+                                    </div>
+                    </div>
+    </div>
+
+            <!-- Mobile Notifications Panel -->
+        <div x-show="showMobileNotifications" 
+             x-transition:enter="transition ease-out duration-300" 
+             x-transition:enter-start="opacity-0 -translate-y-4" 
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0" 
+             x-transition:leave-end="opacity-0 -translate-y-4"
+             class="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm" 
+             @click="showMobileNotifications = false">
+            
+            <div @click.stop class="absolute top-0 left-0 right-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white rounded-b-3xl shadow-2xl dark:shadow-slate-900/50 max-h-[80vh] overflow-hidden">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b border-white/10 dark:border-white/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/10 dark:bg-white/20 rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-bell text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Notifications</h3>
+                                                                                        <p class="text-xs text-white/60">All caught up!</p>
+                                                    </div>
+                    </div>
+                    <button @click="showMobileNotifications = false" class="w-8 h-8 bg-white/10 dark:bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/20 dark:hover:bg-white/30 transition-colors">
+                        <i class="fa-solid fa-times text-white text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Notifications List -->
+                <div class="overflow-y-auto max-h-96 custom-scrollbar">
+                                        
+                                        <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-white/10 dark:bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-bell-slash text-white/40 dark:text-white/60 text-2xl"></i>
+                        </div>
+                        <p class="text-white font-semibold mb-1">No notifications yet</p>
+                        <p class="text-xs text-white/60 dark:text-white/70">We'll notify you when something happens</p>
+                    </div>
+                                    </div>
+                
+                <!-- Footer Actions -->
+                            </div>
+        </div>
+    </div>         </div>
+
+        <!-- Desktop Header -->
+        <div class="hidden lg:flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                <a href="grant-application.html" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 transition-colors">
+                    <i class="fas fa-arrow-left text-xs"></i>
+                </a>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Individual Grant Application</h1>
+            </div>
+        </div>
+
+        <div class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-sm border border-white/20 dark:border-gray-700/50 overflow-hidden mb-4">
+            <div class="bg-gradient-to-r from-primary-50/80 to-white/80 dark:from-primary-900/20 dark:to-gray-800/80 backdrop-blur-sm border-b border-gray-100/50 dark:border-gray-700/50 px-4 py-3">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-user mr-2 text-primary-500 dark:text-primary-400 text-sm"></i>
+                    Apply as Individual
+                </h2>
+            </div>
+            
+            <div class="p-4 lg:p-5">
+                <form action="dashboard.html/grant-application/individual" method="POST">
+                    <input type="hidden" name="_token" value="BrvimcaHe6IUJUmm9XCNgRVfly8N96DyGBHS2lWl">                    
+                                        
+                    <div class="space-y-5 mb-6">
+                        <div>
+                            <label for="requested_amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Requested Amount <span class="text-red-500">*</span></label>
+                            <div class="mt-1 relative rounded-lg shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                                    <span class="text-gray-500 dark:text-gray-400 text-sm">$</span>
+                                </div>
+                                <input type="number" name="requested_amount" id="requested_amount" min="1" value="5000" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 px-2 py-2.5 pl-12 border block w-full text-sm border-gray-300 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 relative z-0" required>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Enter the amount you would like to request for your grant</p>
+                                                    </div>
+                    </div>
+
+                    <div class="text-gray-700 dark:text-gray-300 mb-4">
+                        <p class="text-sm">Please select all funding purposes that apply to your application:</p>
+                    </div>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg p-3 transition-all hover:shadow-sm">
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input id="program_funding" name="program_funding" type="checkbox" value="1" 
+                                           class="h-4 w-4 text-primary-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded focus:ring-primary-500">
+                                </div>
+                                <div class="ml-3">
+                                    <label for="program_funding" class="text-sm font-medium text-gray-900 dark:text-white">Program Funding</label>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        Support for developing or expanding educational, cultural, or social programs.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg p-3 transition-all hover:shadow-sm">
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input id="equipment_funding" name="equipment_funding" type="checkbox" value="1" 
+                                           class="h-4 w-4 text-primary-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded focus:ring-primary-500">
+                                </div>
+                                <div class="ml-3">
+                                    <label for="equipment_funding" class="text-sm font-medium text-gray-900 dark:text-white">Equipment Funding</label>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        Support for purchasing necessary equipment or technology.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg p-3 transition-all hover:shadow-sm">
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input id="research_funding" name="research_funding" type="checkbox" value="1" 
+                                           class="h-4 w-4 text-primary-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded focus:ring-primary-500">
+                                </div>
+                                <div class="ml-3">
+                                    <label for="research_funding" class="text-sm font-medium text-gray-900 dark:text-white">Research Funding</label>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        Support for conducting research or studies in your field.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg p-3 transition-all hover:shadow-sm">
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input id="community_outreach" name="community_outreach" type="checkbox" value="1" 
+                                           class="h-4 w-4 text-primary-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded focus:ring-primary-500">
+                                </div>
+                                <div class="ml-3">
+                                    <label for="community_outreach" class="text-sm font-medium text-gray-900 dark:text-white">Community Outreach</label>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        Support for activities that benefit local communities or underserved populations.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20 backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/50 rounded-lg p-4 mb-6">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
+                                    <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-sm"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-1">Important Information</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    By submitting this application, you acknowledge that the final approved amount will be determined during our review process based on your eligibility and requested amount. You'll receive notification once your application has been processed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+                        <a href="grant-application.html" class="inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                            <i class="fas fa-arrow-left mr-2 text-xs"></i>
+                            Back
+                        </a>
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                            Submit Application
+                            <i class="fas fa-paper-plane ml-2 text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+                                </div>
+                </main>
+                            </div>
+                                </div>
+            
+    <!-- Enhanced Page Loading Animation -->
+    <script>
+        window.onload = function() {
+            const preloader = document.querySelector('.page-loading');
+            
+            // Add a slight delay to make loading animation more noticeable
+            setTimeout(function() {
+                preloader.classList.remove('active');
+                setTimeout(function() {
+                    preloader.remove();
+                }, 500);
+            }, 800);
+        };
+    </script>
+
+    <script>
+  // Listen for auth state (runs on every page load)
+  window.fb.onAuthStateChanged(window.fb.auth, (user) => {
+    if (user) {
+      // User is logged in
+      console.log("Logged in user:", user.uid, user.email);
+
+      // Update welcome message and email everywhere
+      const welcomeElements = document.querySelectorAll('.welcome-name, .user-name');
+      welcomeElements.forEach(el => {
+        el.textContent = user.displayName || user.email.split('@')[0] || "User";
+      });
+
+      const emailElements = document.querySelectorAll('.user-email');
+      emailElements.forEach(el => {
+        el.textContent = user.email;
+      });
+
+      // Optional: Show profile picture/initials
+      const avatarElements = document.querySelectorAll('.user-avatar');
+      avatarElements.forEach(el => {
+        if (user.photoURL) {
+          el.src = user.photoURL;
+          el.alt = user.displayName || "Profile";
+        } else {
+          // Fallback to initials
+          const initials = (user.displayName || user.email[0]).substring(0, 2).toUpperCase();
+          el.textContent = initials;
+          el.style.backgroundColor = getRandomColor(); // optional function below
+        }
+      });
+
+      // Optional: Hide login/signup links, show logout
+      document.querySelectorAll('.show-when-logged-in').forEach(el => el.style.display = 'block');
+      document.querySelectorAll('.show-when-logged-out').forEach(el => el.style.display = 'none');
+
+    } else {
+      // No user → redirect to login
+      console.log("No user logged in → redirecting");
+      window.location.href = "login.html";
+    }
+  });
+
+  // Optional helper for random avatar color
+  function getRandomColor() {
+    const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#0ea5e9'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+</script>
+    
+        
+    <!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = 'f40d38f04d96f011610307deeebad6ccd6f6427c';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
+
+
+
+
+<script type="module" src="firebase.js"></script>
+
+
+
+
+
+
+
+    
+    <script>
+        function googleTranslateElementInit() {
+            const options = { pageLanguage: 'en', autoDisplay: false };
+            if (document.getElementById('google_translate_element_desktop')) {
+                new google.translate.TranslateElement(options, 'google_translate_element_desktop');
+            }
+            if (document.getElementById('google_translate_element_mobile')) {
+                new google.translate.TranslateElement(options, 'google_translate_element_mobile');
+            }
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+</body>
+</html>
