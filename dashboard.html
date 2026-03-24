@@ -201,6 +201,13 @@
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #6b7280; } /* gray-500 */
         .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; } /* gray-400 */
 
+        /* Hide Smartsupp on Mobile */
+        @media (max-width: 1023px) {
+            #smartsupp-widget-container, iframe[title="Smartsupp"] {
+                display: none !important;
+            }
+        }
+
         .shine-effect-container { position: relative; overflow: hidden; }
         .shine-effect {
             position: absolute; top: -50%; left: -50%;
@@ -1094,26 +1101,28 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white px-4 pt-6 pb-8 rounded-b-3xl">
         <!-- Header Section -->
         <div class="flex items-center justify-between mb-6">
-            <div class="flex flex-col items-start space-y-2">
-                <div class="flex items-center space-x-2">
-                   <template x-if="userPhotoURL">
-                    <img :src="userPhotoURL" alt="Profile" class="w-full h-full object-cover">
-                </template>
-                <template x-if="!userPhotoURL">
-                    <div class=" h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg">
-                        <span x-text="getInitials(userDisplayName)"></span>
-                    </div>
-                </template>
-            </div>
+            <div class="flex items-center space-x-3">
+                <!-- Profile Image / Initials -->
+                <div class="relative w-11 h-11 rounded-full overflow-hidden flex-shrink-0 border-2 border-white/20">
+                    <template x-if="userPhotoURL">
+                        <img :src="userPhotoURL" alt="Profile" class="w-full h-full object-cover">
+                    </template>
+                    <template x-if="!userPhotoURL">
+                        <div class="w-full h-full bg-primary-500 flex items-center justify-center text-white font-bold text-sm">
+                            <span x-text="getInitials(userDisplayName)"></span>
+                        </div>
+                    </template>
+                </div>
 
-            <div>
-                <p class="text-white/80 text-xs" x-text="greeting + ','"></p>
-                <p class="text-white font-semibold text-base" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
-                <p class="text-white/60 text-xs">
-                    Member since <span x-text="memberSince || 'N/A'"></span>
-                </p>
+                <!-- User Details -->
+                <div class="flex flex-col justify-center">
+                    <p class="text-white/80 text-[10px] uppercase tracking-wider mb-0.5 leading-none" x-text="greeting + ','"></p>
+                    <p class="text-white font-semibold text-sm leading-none" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
+                    <p class="text-white/60 text-[10px] mt-1 leading-none">
+                        Member since <span x-text="memberSince || 'N/A'"></span>
+                    </p>
+                </div>
             </div>
-        </div>
             
             <!-- Mobile Header Actions (Light & Notification) -->
             <div class="flex items-center space-x-3">
@@ -2865,40 +2874,36 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
     </div>
 </div></div>
     
-    <!-- Mobile Bottom Navigation Bar -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)] safe-area-bottom">
-        <div class="flex justify-around items-center px-4 py-3">
-            <!-- Home (Dashboard) -->
-            <a href="dashboard.html" class="flex flex-col items-center justify-center space-y-1 text-primary-600 dark:text-primary-400 relative">
-                <i class="fa-solid fa-house text-xl mb-1"></i>
+    <!-- Floating Mobile Bottom Navigation Bar -->
+    <div class="lg:hidden fixed bottom-4 left-4 right-4 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+        <div class="flex justify-around items-center px-2 py-3">
+            <!-- Home -->
+            <a href="dashboard.html" class="flex flex-col items-center justify-center w-14 text-primary-600 dark:text-primary-400">
+                <i class="fa-solid fa-house text-lg mb-1"></i>
                 <span class="text-[10px] font-semibold">Home</span>
             </a>
             
             <!-- Activity -->
-            <a href="accounthistory.html" class="flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
-                <i class="fa-solid fa-chart-line text-xl mb-1"></i>
+            <a href="accounthistory.html" class="flex flex-col items-center justify-center w-14 text-gray-400 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
+                <i class="fa-solid fa-chart-line text-lg mb-1"></i>
                 <span class="text-[10px] font-medium">Activity</span>
             </a>
             
             <!-- Transfer -->
-            <div class="flex flex-col items-center justify-center relative -top-5">
-                <a href="localtransfer.html" class="flex flex-col items-center justify-center text-center">
-                    <div class="w-14 h-14 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-primary-500/30 border-4 border-white dark:border-gray-900 hover:scale-105 transition-transform duration-200">
-                        <i class="fa-solid fa-paper-plane text-xl"></i>
-                    </div>
-                    <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400 mt-1">Transfer</span>
-                </a>
-            </div>
+            <a href="localtransfer.html" class="flex flex-col items-center justify-center w-14 text-gray-400 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
+                <i class="fa-solid fa-paper-plane text-lg mb-1"></i>
+                <span class="text-[10px] font-medium">Transfer</span>
+            </a>
             
             <!-- Cards -->
-            <a href="cardsection.html" class="flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
-                <i class="fa-solid fa-credit-card text-xl mb-1"></i>
+            <a href="cardsection.html" class="flex flex-col items-center justify-center w-14 text-gray-400 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
+                <i class="fa-solid fa-credit-card text-lg mb-1"></i>
                 <span class="text-[10px] font-medium">Cards</span>
             </a>
             
             <!-- Profile -->
-            <a href="account-settings.html" class="flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
-                <i class="fa-solid fa-user text-xl mb-1"></i>
+            <a href="account-settings.html" class="flex flex-col items-center justify-center w-14 text-gray-400 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
+                <i class="fa-solid fa-user text-lg mb-1"></i>
                 <span class="text-[10px] font-medium">Profile</span>
             </a>
         </div>
