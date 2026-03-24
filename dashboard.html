@@ -752,7 +752,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                 <!-- Desktop Layout -->
         <div class="flex h-screen">
             <!-- Desktop Sidebar -->
-            <div class="hidden lg:flex w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 flex-col shadow-xl">
+            <div class="w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 flex flex-col shadow-xl">
                 <!-- Logo Section -->
                 <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
                     <div class="flex items-center space-x-3">
@@ -916,7 +916,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
             <!-- Desktop Main Content -->
             <div class="flex-1 flex flex-col">
                 <!-- Desktop Header -->
-                <header class="hidden lg:block bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 shadow-sm relative z-50">
+                <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 shadow-sm relative z-50">
                     <div class="flex items-center justify-between">
                         <!-- Page Title & Breadcrumb -->
                     <div class="flex items-center space-x-4">
@@ -1085,7 +1085,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
 
                       <!-- Main Content -->
                 <main class="flex-1 bg-gray-50 dark:bg-gray-900 min-h-0">
-                    <div class="h-full overflow-y-auto">
+                    <div class="h-full overflow-y-auto pb-24 lg:pb-0">
                         <div x-data="dashboardState()" x-init="init()">
         
     
@@ -1113,10 +1113,20 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                     Member since <span x-text="memberSince || 'N/A'"></span>
                 </p>
             </div>
-        </div>
 
-                    
-        
+            <!-- Mobile Header Actions -->
+            <div class="flex items-center space-x-3">
+                <button @click="toggleDarkMode()" 
+                        class="w-10 h-10 bg-white/10 hover:bg-white/20 dark:bg-gray-800/50 dark:hover:bg-gray-700/50 rounded-full flex items-center justify-center transition-colors backdrop-blur-sm border border-white/10">
+                    <i x-show="!darkMode" class="fa-solid fa-moon text-white text-sm"></i>
+                    <i x-show="darkMode" class="fa-solid fa-sun text-yellow-400 text-sm"></i>
+                </button>
+                <button @click="showMobileNotifications = true" 
+                        class="w-10 h-10 bg-white/10 hover:bg-white/20 dark:bg-gray-800/50 dark:hover:bg-gray-700/50 rounded-full flex items-center justify-center transition-colors backdrop-blur-sm border border-white/10 relative">
+                    <i class="fa-solid fa-bell text-white text-sm"></i>
+                    <span class="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-slate-900 hidden"></span>
+                </button>
+            </div>
         </div>
 
         <!-- Mobile Balance Cards -->
@@ -2161,7 +2171,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
     </div>
 
     <!-- Desktop Main Content -->
-    <div class="hidden lg:grid px-6 grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="px-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left Column -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Recent Transactions -->
@@ -2847,6 +2857,30 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                     </div>
                             </div>
         </div>
+    <!-- Mobile Bottom Navigation -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-6 py-3 flex justify-between items-center z-[100] shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
+        <a href="dashboard.html" class="flex flex-col items-center justify-center w-12 text-primary-600 dark:text-primary-400 relative group">
+            <i class="fa-solid fa-house mb-1 text-xl group-active:scale-95 transition-transform"></i>
+            <span class="text-[10px] font-medium">Home</span>
+            <div class="absolute -top-3 w-10 h-1 bg-primary-500 rounded-b-lg"></div>
+        </a>
+        <a href="accounthistory.html" class="flex flex-col items-center justify-center w-12 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors group">
+            <i class="fa-solid fa-chart-line mb-1 text-xl group-active:scale-95 transition-transform"></i>
+            <span class="text-[10px] font-medium">History</span>
+        </a>
+        <div class="relative -top-5 flex justify-center w-16">
+            <button @click="showSendMoney = true" class="w-14 h-14 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-primary-500/30 border-4 border-gray-50 dark:border-gray-900 transform transition hover:scale-105 active:scale-95">
+                <i class="fa-solid fa-paper-plane text-xl border-white"></i>
+            </button>
+        </div>
+        <a href="cardsection.html" class="flex flex-col items-center justify-center w-12 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors group">
+            <i class="fa-solid fa-credit-card mb-1 text-xl group-active:scale-95 transition-transform"></i>
+            <span class="text-[10px] font-medium">Cards</span>
+        </a>
+        <a href="account-settings.html" class="flex flex-col items-center justify-center w-12 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors group">
+            <i class="fa-solid fa-user mb-1 text-xl group-active:scale-95 transition-transform"></i>
+            <span class="text-[10px] font-medium">Profile</span>
+        </a>
     </div>
 </div></div>
 
