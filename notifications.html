@@ -241,6 +241,14 @@
         body {
             top: 0 !important;
         }
+
+        @media (max-width: 1024px) {
+            #smartsupp-widget-container,
+            .smartsupp-widget,
+            iframe[title*="Smartsupp"] {
+                display: none !important;
+            }
+        }
     </style>
     
     <!-- Ultra Modern Loading Animation -->
@@ -699,7 +707,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                 <!-- Desktop Layout -->
         <div class="flex h-screen">
             <!-- Desktop Sidebar -->
-            <div class="w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 flex flex-col shadow-xl">
+            <div class="hidden lg:flex lg:flex-col w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 shadow-xl">
                 <!-- Logo Section -->
                 <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
                     <div class="flex items-center space-x-3">
@@ -1262,6 +1270,44 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
     </script>
     
         
+    
+    <!-- Mobile Floating Bottom Navbar -->
+    <div class="lg:hidden fixed bottom-4 left-4 right-4 z-50">
+        <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-2 py-2">
+            <div class="flex items-center justify-between pointer-events-auto">
+                <!-- Home -->
+                <a href="dashboard.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-primary-600 dark:text-primary-400">
+                    <i class="fa-solid fa-house mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Home</span>
+                </a>
+                
+                <!-- Activity -->
+                <a href="accounthistory.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-chart-line mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium relative">Activity</span>
+                </a>
+                
+                <!-- Transfer -->
+                <a href="localtransfer.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-paper-plane mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Transfer</span>
+                </a>
+                
+                <!-- Cards -->
+                <a href="cardsection.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-credit-card mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Cards</span>
+                </a>
+                
+                <!-- Profile -->
+                <a href="account-settings.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-user mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Profile</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Smartsupp Live Chat script -->
 <script type="text/javascript">
 var _smartsupp = _smartsupp || {};
