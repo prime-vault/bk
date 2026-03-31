@@ -291,13 +291,7 @@
             top: 0 !important;
         }
 
-        @media (max-width: 1024px) {
-            #smartsupp-widget-container,
-            .smartsupp-widget,
-            iframe[title*="Smartsupp"] {
-                display: none !important;
-            }
-        }
+        @media (max-width: 1024px) {}
     </style>
     
     <!-- Ultra Modern Loading Animation -->
@@ -673,6 +667,11 @@
     accountNumberMasked: '•••• ••••',
 
     // New method for capitalizing first name
+    capitalizeFullName(name) {
+        if (!name || typeof name !== 'string' || name.trim() === '') return 'Guest';
+        return name.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+    },
+
     capitalizeFirstName(name) {
         if (!name || typeof name !== 'string' || name.trim() === '') {
             return 'Guest';
@@ -899,7 +898,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
         </div>
         
         <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="capitalizeFirstName(userDisplayName)|| 'Guest'"></p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="capitalizeFullName(userDisplayName) || 'Guest'"></p>
             <p class="text-xs text-gray-500 dark:text-gray-400 truncate" x-text="userEmail || 'Not logged in'"></p>
         </div>
         
@@ -1010,7 +1009,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
 
                                 <!-- Name & Email (hidden on mobile) -->
                                 <div class="hidden md:block text-left">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="capitalizeFirstName(userDisplayName).split(' ')[0] || 'Guest'"></p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="capitalizeFullName(userDisplayName) || 'Guest'"></p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400" x-text="userEmail"></p>
                                 </div>
 
@@ -1116,7 +1115,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
 
             <div>
                 <p class="text-white/80 text-xs" x-text="greeting + ','"></p>
-                <p class="text-white font-semibold text-base" x-text="capitalizeFirstName(userDisplayName).split(' ')[0] || 'Guest'"></p>
+                <p class="text-white font-semibold text-base" x-text="capitalizeFullName(userDisplayName) || 'Guest'"></p>
                 <p class="text-white/60 text-xs">
                     Member since <span x-text="memberSince || 'N/A'"></span>
                 </p>
@@ -2859,7 +2858,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
 </div></div>
 
     <!-- Mobile Floating Bottom Navbar -->
-    <div class="lg:hidden fixed bottom-4 left-4 right-4 z-50">
+    <div class="lg:hidden fixed bottom-4 left-4 right-20 z-50">
         <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-2 py-2">
             <div class="flex items-center justify-between pointer-events-auto">
                 <!-- Home -->
@@ -2881,7 +2880,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                 </a>
                 
                 <!-- Cards -->
-                <a href="cards.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                <a href="cardsection.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
                     <i class="fa-solid fa-credit-card mb-1 text-lg"></i>
                     <span class="text-[10px] font-medium">Cards</span>
                 </a>
@@ -3192,21 +3191,7 @@ function dashboardQuickTransfer() {
     </script>
    
        
-    <!-- Smartsupp Live Chat script -->
-    <script type="text/javascript">
-    var _smartsupp = _smartsupp || {};
-    _smartsupp.key = 'f40d38f04d96f011610307deeebad6ccd6f6427c';
-    if (window.innerWidth < 1024) {
-        _smartsupp.hideWidget = true;
-    }
-    window.smartsupp||(function(d) {
-      var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-      s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-      c.type='text/javascript';c.charset='utf-8';c.async=true;
-      c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-    })(document);
-    </script>
-    <noscript> Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+    
    
     <script>
         function googleTranslateElementInit() {
@@ -3221,5 +3206,10 @@ function dashboardQuickTransfer() {
     </script>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
    
+
+    <!-- Custom Firebase Support Chat -->
+    <link rel="stylesheet" href="chat-widget.css">
+    <script defer src="chat-widget.js"></script>
+
 </body>
 </html>

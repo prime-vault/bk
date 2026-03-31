@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Vault | Admin Live Chat</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        },
+                        background: '#f8fafc',
+                        foreground: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVyyL243cxKqYYfSiBBpEBiCs3I4iVlHw",
+            authDomain: "prime-vault-bf73d.firebaseapp.com",
+            projectId: "prime-vault-bf73d",
+            storageBucket: "prime-vault-bf73d.firebasestorage.app",
+            messagingSenderId: "317063080962",
+            appId: "1:317063080962:web:875faaeb6ee2af9b3ccb1b",
+            measurementId: "G-FSNK0T2ZD3"
+        };
+
+        function initializeFirebase() {
+            if (typeof firebase === 'undefined') {
+                console.error("Firebase SDK failed to load – check network or adblocker");
+                return;
+            }
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                window.auth = firebase.auth();
+                window.db = firebase.firestore();
+            } catch (err) {
+                console.error("Firebase setup failed:", err.message);
+            }
+        }
+        initializeFirebase();
+        setTimeout(initializeFirebase, 300);
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aquawolf04/font-awesome-pro@5cd1511/css/all.css">
+    
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .chat-container { display: flex; height: 100vh; overflow: hidden; background: #f1f5f9; }
+        .sidebar { width: 320px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .main-chat { flex-grow: 1; display: flex; flex-direction: column; background: white; }
+        .user-list { overflow-y: auto; flex-grow: 1; }
+        .user-item { padding: 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s; }
+        .user-item:hover, .user-item.active { background: #f8fafc; }
+        .user-item h4 { font-weight: 600; color: #0f172a; margin: 0 0 4px 0; }
+        .user-item p { font-size: 13px; color: #64748b; margin: 0; }
+        
+        .chat-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #fafafa; }
+        
+        .message { max-width: 70%; padding: 12px 16px; border-radius: 12px; font-size: 15px; line-height: 1.4; position:relative; }
+        .message.support { align-self: flex-end; background: #0ea5e9; color: white; border-bottom-right-radius: 2px; }
+        .message.user { align-self: flex-start; background: white; color: #0f172a; border-bottom-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        
+        .msg-time { display: block; font-size: 11px; margin-top: 4px; opacity: 0.8;}
+        .message.support .msg-time { color: #e0f2fe; text-align: right; }
+        .message.user .msg-time { color: #94a3b8; }
+        
+        .chat-input { padding: 20px; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; background: white; }
+        .chat-input input { flex-grow: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 9999px; outline: none; font-size: 15px; transition: border-color 0.2s; }
+        .chat-input input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2); }
+        .chat-input button { background: #0ea5e9; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .chat-input button:hover:not(:disabled) { background: #0284c7; }
+        .chat-input button:disabled { background: #cbd5e1; cursor: not-allowed; }
+        
+        .no-chat-selected { display: flex; align-items: center; justify-content: center; height: 100%; color: #94a3b8; flex-direction: column; gap: 16px; }
+        .no-chat-selected i { font-size: 48px; color: #e2e8f0; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="p-5 border-b border-slate-200 bg-white shadow-sm z-10 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-headset text-primary-500"></i> Support Admin
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">Manage customer queries</p>
+                </div>
+                <!-- Optional: Back to Dashboard link -->
+                <a href="dashboard.html" class="text-slate-400 hover:text-slate-600 transition" title="Back to Dashboard">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                </a>
+            </div>
+            
+            <div class="user-list" id="user-list">
+                <!-- Users will be populated here -->
+                <div class="p-4 text-center text-sm text-slate-400">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading chats...
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-chat hidden" id="chat-pane">
+            <div class="chat-header">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 m-0" id="chat-user-name">User Name</h3>
+                    <p class="text-xs text-slate-500 m-0 mt-1" id="chat-user-uid">ID: ...</p>
+                </div>
+                <button class="text-slate-400 hover:text-slate-600 transition" onclick="closeChat()">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will appear here -->
+            </div>
+
+            <div class="chat-input" id="chat-input-area">
+                <input type="text" id="message-input" placeholder="Type a message to reply..." autocomplete="off">
+                <button id="send-btn" disabled>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- No Chat Selected Placeholder -->
+        <div class="main-chat" id="no-chat-pane">
+            <div class="no-chat-selected">
+                <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                    <i class="fa-solid fa-comments text-4xl text-slate-300"></i>
+                </div>
+                <h3 class="text-xl font-medium text-slate-600">Select a conversation</h3>
+                <p class="text-sm text-slate-400 max-w-xs text-center">Choose a user from the sidebar to view their messages and reply.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Chat Script -->
+    <script src="admin-chat.js"></script>
+</body>
+</html>

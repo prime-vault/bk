@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prime Vault | Verify your Account</title>
+    <title>Prime Vault | Grant Applications</title>
     <meta name="description" content="Swift and Secure Money Transfer to any UK bank account will become a breeze with Prime Vault." />
     <link rel="shortcut icon" href="images/primevault.png" />
     
@@ -240,8 +240,6 @@
         body {
             top: 0 !important;
         }
-
-        @media (max-width: 1024px) {}
     </style>
     
     <!-- Ultra Modern Loading Animation -->
@@ -575,46 +573,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 
-    </head>
-
-<body class="bg-background text-foreground">
-    <!-- Ultra Modern Page Loader -->
-    <div class="page-loading active">
-        <div class="page-loading-inner">
-            <div class="loading-container">
-                <!-- Floating particles background -->
-                <div class="loading-particles">
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                </div>
-                
-                <!-- Main loading animation -->
-                <div class="loading-animation">
-                    <!-- Outer orbital rings -->
-                    <div class="orbit-ring"></div>
-                    <div class="orbit-ring"></div>
-                    <div class="orbit-ring"></div>
-                    
-                    <!-- Inner spinning circles -->
-                    <div class="inner-circle"></div>
-                    <div class="inner-circle"></div>
-                    
-                    <!-- Morphing glowing core -->
-                    <div class="core"></div>
-                </div>
-                
-                <!-- Enhanced text with effects -->
-                <div class="text">Prime Vault</div>
-                <div class="subtitle">Secure Banking Platform</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<script>
     // Helper: Safe auth listener that waits until auth is ready
     function safeAttachAuthListener() {
         if (!window.auth) {
@@ -722,9 +681,48 @@
         safeAttachAuthListener();
     });
 </script>
+
+    </head>
+
+<body class="bg-background text-foreground">
+    <!-- Ultra Modern Page Loader -->
+    <div class="page-loading active">
+        <div class="page-loading-inner">
+            <div class="loading-container">
+                <!-- Floating particles background -->
+                <div class="loading-particles">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+                
+                <!-- Main loading animation -->
+                <div class="loading-animation">
+                    <!-- Outer orbital rings -->
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    
+                    <!-- Inner spinning circles -->
+                    <div class="inner-circle"></div>
+                    <div class="inner-circle"></div>
+                    
+                    <!-- Morphing glowing core -->
+                    <div class="core"></div>
+                </div>
+                
+                <!-- Enhanced text with effects -->
+                <div class="text">Prime Vault</div>
+                <div class="subtitle">Secure Banking Platform</div>
+            </div>
+        </div>
+    </div>
     
     
-      <div x-data="{
+<div x-data="{
     sidebarOpen: false,
     mobileMenuOpen: false,
     notificationOpen: false,
@@ -806,6 +804,7 @@ x-init="initDarkMode(); initUser();"
 @click.away="closeDropdowns()"
 class="min-h-screen bg-gray-50 dark:bg-gray-900">
 
+
                 <!-- Desktop Layout -->
         <div class="flex h-screen">
             <!-- Desktop Sidebar -->
@@ -839,7 +838,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                                 </div>
                                         <span class="font-semibold">Transactions</span>
                                                                             </a>
-                                                                    <a href="cardsection.html" 
+                                                                    <a href="cards.html" 
                                        class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
                                             <i class="fa-solid fa-credit-card text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
@@ -899,12 +898,13 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                                         <span class="font-semibold">Tax Refund</span>
                                                                             </a>
                                                                     <a href="grant-application.html" 
-                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-800 hover:text-primary-700 dark:hover:text-primary-400">
-                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-100 dark:group-hover:bg-gray-700 transition-colors">
-                                            <i class="fa-solid fa-hand-holding-dollar text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"></i>
+                                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-white/20 transition-colors">
+                                            <i class="fa-solid fa-hand-holding-dollar text-white transition-colors"></i>
                                 </div>
                                         <span class="font-semibold">Grants</span>
-                                                                            </a>
+                                                                                    <div class="ml-auto w-2 h-2 bg-white dark:bg-gray-300 rounded-full"></div>
+                                                                </a>
                                                         </div>
                     </div>
                                             <div class="mb-8">
@@ -928,62 +928,62 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                     </div>
                                     </nav>
 
-               <!-- User Profile Section -->
-<div class="p-4 border-t border-gray-200/50 dark:border-gray-700/50">
-    <div class="flex items-center space-x-4 p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border border-gray-200/50 dark:border-gray-700/50">
-        <div class="relative">
-            <!-- Dynamic Avatar: Photo if available, otherwise first letter of name -->
-            <div class="h-10 w-10 rounded-full overflow-hidden bg-primary-500 flex items-center justify-center text-white font-bold border-2 border-primary-100">
-                <template x-if="userPhotoURL">
-                    <img :src="userPhotoURL" alt="Profile" class="w-full h-full object-cover">
-                </template>
-                <template x-if="!userPhotoURL">
-                <span x-text="getInitials(userDisplayName)"></span>
-                </template>
+                <!-- User Profile Section -->
+    <div class="p-4 border-t border-gray-200/50 dark:border-gray-700/50">
+        <div class="flex items-center space-x-4 p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border border-gray-200/50 dark:border-gray-700/50">
+            <div class="relative">
+                <!-- Dynamic Avatar: Photo if available, otherwise first letter of name -->
+                <div class="h-10 w-10 rounded-full overflow-hidden bg-primary-500 flex items-center justify-center text-white font-bold border-2 border-primary-100">
+                    <template x-if="userPhotoURL">
+                        <img :src="userPhotoURL" alt="Profile" class="w-full h-full object-cover">
+                    </template>
+                    <template x-if="!userPhotoURL">
+                    <span x-text="getInitials(userDisplayName)"></span>
+                    </template>
+                </div>
+                <!-- Online status dot -->
+                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-600"></div>
             </div>
-            <!-- Online status dot -->
-            <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-600"></div>
-        </div>
-        
-        <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="userDisplayName || 'Guest'"></p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 truncate" x-text="userEmail || 'Not logged in'"></p>
-        </div>
-                            
-                                              
-                           <!-- Working Logout Button -->
-        <button 
-            @click="auth.signOut().then(() => {
-                console.log('Signed out successfully');
-                window.location.href = '/login.html';  // ← change to your actual login page path
-            }).catch((error) => {
-                console.error('Logout error:', error);
-                alert('Logout failed: ' + error.message);
-            })"
-            type="button"
-            id="submit-btn"
-            class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors flex items-center justify-center">
-            <i class="fa-solid fa-right-from-bracket text-sm"></i>
-        </button>
-                    
-                        </form>
+            
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="userDisplayName || 'Guest'"></p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 truncate" x-text="userEmail || 'Not logged in'"></p>
             </div>
-        </div>
-                    </div>
-                    
-            <!-- Desktop Main Content -->
-            <div class="flex-1 flex flex-col">
-                <!-- Desktop Header -->
-                <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 shadow-sm relative z-50">
-                    <div class="flex items-center justify-between">
-                        <!-- Page Title & Breadcrumb -->
-                    <div class="flex items-center space-x-4">
-                            <div>
-                               <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                                                               Dashboard                                </h1>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Welcome, <span x-text="$store.global.capitalizeFirstName($store.global.userDisplayName)"></span>
-                        </p>
+                                
+                                                
+                            <!-- Working Logout Button -->
+            <button 
+                @click="auth.signOut().then(() => {
+                    console.log('Signed out successfully');
+                    window.location.href = '/login.html';  // ← change to your actual login page path
+                }).catch((error) => {
+                    console.error('Logout error:', error);
+                    alert('Logout failed: ' + error.message);
+                })"
+                type="button"
+                id="submit-btn"
+                class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors flex items-center justify-center">
+                <i class="fa-solid fa-right-from-bracket text-sm"></i>
+            </button>
+                        
+                            </form>
+                </div>
+            </div>
+                        </div>
+                        
+                <!-- Desktop Main Content -->
+                <div class="flex-1 flex flex-col">
+                    <!-- Desktop Header -->
+                    <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 shadow-sm relative z-50">
+                        <div class="flex items-center justify-between">
+                            <!-- Page Title & Breadcrumb -->
+                        <div class="flex items-center space-x-4">
+                                <div>
+                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                        Dashboard                                </h1>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                Welcome, <span x-text="$store.global.capitalizeFirstName($store.global.userDisplayName)"></span>
+                            </p>
                         </div>
                     </div>
                     
@@ -1041,7 +1041,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                             </div>
                         </div>
 
-                       <!-- User Dropdown -->
+               <!-- User Dropdown -->
                         <div class="relative inline-block">
                             <button @click="toggleUserDropdown()"
                                     class="flex items-center space-x-3 p-2 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
@@ -1141,8 +1141,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                 <!-- Main Content -->
                 <main class="flex-1 bg-gray-50 dark:bg-gray-900 min-h-0">
                     <div class="h-full overflow-y-auto">
-                        
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-3 lg:p-4">
+                        <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-3 lg:p-4">
     <div class="max-w-8xl mx-auto">
         <!-- Alerts -->
                         
@@ -1159,7 +1158,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                         
             <div>
                                     <!-- Custom Title -->
-                    <p class="text-gray-900 dark:text-white font-semibold text-base">Account Verification</p>
+                    <p class="text-gray-900 dark:text-white font-semibold text-base">Grant Applications</p>
                             </div>
         </div>
         
@@ -1172,155 +1171,48 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
 
         <!-- Desktop Header -->
         <div class="hidden lg:flex items-center justify-between mb-4">
-            <div class="flex items-center space-x-2">
-                <a href="dashboard.html" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 transition-colors">
-                    <i class="fas fa-arrow-left text-xs"></i>
-                </a>
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Account Verification</h1>
-            </div>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Grant Applications</h1>
         </div>
 
-        <!-- Main Content -->
-        <div class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-sm border border-white/20 dark:border-gray-700/50 overflow-hidden">
-            <!-- Content Header -->
-            <div class="border-b border-gray-200/50 dark:border-gray-700/50 px-4 lg:px-5 py-3">
-                <div class="flex items-center">
-                    <i class="fas fa-shield-alt text-primary-600 dark:text-primary-400 mr-2 text-lg"></i>
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Verify Your Identity</h2>
-                </div>
-            </div>
-            
-            <!-- Form Content -->
-            <div class="p-4 lg:p-5">
-                <div class="max-w-6xl mx-auto">
-                    <!-- Welcome Message -->
-                                            <!-- Welcome Card -->
-                        <div class="bg-white/80 dark:bg-gray-700/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg p-4 mb-4">
-                            <div class="flex items-center mb-4">
-                                <div class="h-10 w-10 rounded-full bg-primary-100/80 dark:bg-primary-900/30 backdrop-blur-sm flex items-center justify-center mr-3">
-                                    <i class="fas fa-user-check text-primary-600 dark:text-primary-400 text-lg"></i>
-                                </div>
-                                <div>
-                                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Welcome to Prime Vault</h2>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Complete your account verification to access all features</p>
-                                </div>
-                            </div>
-                            
-                            <div class="prose prose-sm max-w-none text-gray-600 dark:text-gray-400 mb-4 text-sm">
-                            <p class="mb-2"><strong class="text-gray-900 dark:text-white">Dear <span x-text="userDisplayName"></span>,</strong></p>
-                                
-                                <p>Welcome Onboard! Prime Vault is the market's most innovative and fastest-growing company in the financial industry. We look forward to working with you to help you get the most out of our financial services and realize your banking goals.</p>
-                                
-                                <p>Here at Prime Vault, we are committed to providing a wide variety of savings, investment, and loan products, all designed to meet your specific needs. Our services are being used by over two million customers around the world.</p>
-                                
-                                <p>Our excellent customer support team is available 24/7 to help you with any questions. You can contact them at: <a href="mailto:support@primevault.com" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">support@primevault.com</a>.</p>
-                                
-                                <p>We need a little more information to complete your registration, including completing the AML/KYC form. Please review our terms and conditions below before proceeding.</p>
-                            </div>
-                        </div>
-                    
-                        <!-- Terms and Conditions Card -->
-                        <div class="bg-gray-50/80 dark:bg-gray-700/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg p-4">
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
-                                <i class="fas fa-file-alt text-primary-600 dark:text-primary-400 mr-2 text-sm"></i>
-                                Terms and Conditions
-                            </h3>
-                            
-                            <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg p-3 h-64 overflow-y-auto text-sm text-gray-700 dark:text-gray-300 mb-4">
-                                <p class="mb-4">
-                                    Before you can start using our online service you must agree to be bound by the conditions below. You must read the 
-                                    conditions before you decide whether to accept them. If you agree to be bound by these conditions, please click the 
-                                    I accept button below. If you click on the Decline button, you will not be able to continue your registration for our 
-                                    online services. We strongly recommend that you print a copy of these conditions for your reference.
-                                </p>
-                                
-                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4 mb-2">1. DEFINITIONS</h4>
-                                <p class="mb-2">In these conditions the following words have the following meanings:</p>
-                                <ul class="list-disc pl-6 mb-4 space-y-1">
-                                    <li><span class="font-medium">ACCOUNT:</span> any account which you hold and access via our online service.</li>
-                                    <li><span class="font-medium">ADDITIONAL SECURITY DETAILS:</span> the additional information you give us to help us identify you including the additional security question you provide yourself.</li>
-                                    <li><span class="font-medium">IDENTITY DETAILS:</span> the access code we may provide you with.</li>
-                                    <li><span class="font-medium">Prime Vault ACCOUNT NUMBER, PASSWORD and ACCOUNT PIN:</span> you choose to identify yourself when you use our online service.</li>
-                                    <li><span class="font-medium">YOU, YOUR and YOURSELF:</span> refer to the person who has entered into this agreement with us.</li>
-                                </ul>
-                                
-                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4 mb-2">2. USING THE ONLINE SERVICE</h4>
-                                <ol class="list-alpha pl-6 mb-4 space-y-2">
-                                    <li>These conditions apply to your use of our online service and in relation to any accounts. They explain the relationship between you and us in relation to our online service. You should read these conditions carefully to understand how these services work and your and our rights and duties under them. If there is a conflict between these conditions and your account conditions, these conditions will apply. This means that, when you use our online service both sets of conditions will apply unless they contradict each other in which case, the relevant condition in these conditions apply.</li>
-                                    <li>If any of your accounts is a joint account, these conditions apply to all of you together and any of you separately. If more than one of you uses our online service you must each choose your own username, password and additional security details.</li>
-                                    <li>By registering to use our online service, you accept these conditions and agree that we may communicate with you by e-mail or through our website.</li>
-                                    <li>When you use our online service you must follow the instructions we give you from time to time. You are responsible for ensuring that your computer, software and other equipment are capable of being used with our online service.</li>
-                                    <li>Our online sites are secure. Disconnection from the Internet or leaving these sites will not automatically log you off. You must always use the log off facility when you are finished and never leave your machine unattended while you are logged in. As a security measure, if you have not used the sites for more than a specified period of time we will ask you to log in again.</li>
-                                </ol>
-                                
-                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4 mb-2">3. WHAT RULES APPLY TO SECURITY?</h4>
-                                <ol class="list-alpha pl-6 mb-4 space-y-2">
-                                    <li>As part of the registration for our online service you must provide us with identity details before we will allow you to use the services for the first time. You must enter your identity details immediately after signing in, so we can identify you.</li>
-                                    <li>Every time you use our online service you must give us your username, your password and the answer to an additional security question.</li>
-                                    <li>You can change your username or password online by following the instructions on the screen.</li>
-                                    <li>For administration or security reasons, we can require you to choose a new username or change your password before you use (or carry on using) our online service.</li>
-                                    <li>You must not write down, store (whether encrypted or otherwise) on your computer or let anyone else know your password, identity details or additional security details, and the fact that they are for use with your accounts.</li>
-                                </ol>
-                                
-                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4 mb-2">4. WHAT IS THE EXTENT OF YOUR LIABILITY?</h4>
-                                <ol class="list-alpha pl-6 mb-4 space-y-2">
-                                    <li>If you are a victim of online fraud, we guarantee that you won't lose any money on your accounts and will always be reimbursed in full.</li>
-                                    <li>Unless you are a victim of fraud you are responsible for all instructions and other information sent using your username, password or additional security details.</li>
-                                    <li>You will not be held responsible for any instructions or information sent after you have told us that someone knows your password or additional security details and has used any of them to access our online service.</li>
-                                    <li>Prime Vault does not accept responsibility for any loss you or anybody else may suffer because any instructions or information you sent us are sent in error, fail to reach us or are distorted unless you have been the victim of fraud.</li>
-                                    <li>Prime Vault does not accept responsibility for any loss you or anybody else may suffer because any instructions or information we send you fail to reach you or are distorted unless you have been the victim of fraud.</li>
-                                </ol>
-                                
-                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4 mb-2">5. HOW WE CAN CHANGE THESE CONDITIONS</h4>
-                                <ol class="list-alpha pl-6 mb-4 space-y-2">
-                                    <li>Prime Vault may change these conditions for any reason by giving you written notice or publishing the change on our website.</li>
-                                    <li>We may send all written notices to you at the last e-mail address you gave us. You must let us know immediately if you change your e-mail address (you can do so online), to make sure that we have your current e-mail address at all times.</li>
-                                </ol>
-                                
-                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4 mb-2">6. GENERAL</h4>
-                                <p>Prime Vault service is available to you if you are 18 years of age or over.</p>
-                            </div>
-                            
-                            <div class="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
-                                <a href="kyc-form.html" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
-                                    <i class="fas fa-check-circle mr-2 text-xs"></i>
-                                    I Accept & Proceed to Verification
-                                </a>
-                                
-                                <a href="home.html" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="fas fa-times-circle mr-2 text-gray-500 dark:text-gray-400 text-xs"></i>
-                                    Decline
-                                </a>
-                               <button type="submit" form="logout-form">Sign Out</button>
-                            </div>
-                        </div>
-                                    </div>
-            </div>
-        </div>
         
-        <!-- Support Section -->
-        <div class="mt-6 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-sm border border-white/20 dark:border-gray-700/50 overflow-hidden">
-            <div class="p-4 lg:p-5">
-                <div class="flex flex-col md:flex-row gap-4 items-center">
-                    <div class="flex-shrink-0">
-                        <div class="h-12 w-12 bg-primary-50/80 dark:bg-primary-900/30 backdrop-blur-sm rounded-full flex items-center justify-center">
-                            <i class="fas fa-life-ring text-primary-600 dark:text-primary-400 text-lg"></i>
+                    <div class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-sm border border-white/20 dark:border-gray-700/50 overflow-hidden mb-4">
+                <div class="p-4 lg:p-5 text-center">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Select Application Type</h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 max-w-3xl mx-auto text-sm">
+                        Please select the type of application you would like to submit.
+                        Different documentation is required for individual and company applications.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                        <div class="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-xl p-4 shadow-sm transition-all hover:shadow-md">
+                            <div class="h-10 w-10 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-user text-primary-600 dark:text-primary-400 text-sm"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Apply as Individual</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+                                For individual applicants seeking funding for programs, equipment, research or community outreach.
+                            </p>
+                            <a href="individual.html" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                                Continue
+                            </a>
                         </div>
-                    </div>
-                    <div class="flex-grow text-center md:text-left">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Need help with verification?</h3>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm">Our support team is available 24/7 to assist you with the verification process. Reach out with any questions.</p>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <a href="support.html" class="inline-flex items-center justify-center px-4 py-2 border border-primary-600 dark:border-primary-500 rounded-lg shadow-sm text-sm font-medium text-primary-600 dark:text-primary-400 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
-                            <i class="fas fa-comments mr-2 text-xs"></i>
-                            Contact Support
-                        </a>
+                        
+                        <div class="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-xl p-4 shadow-sm transition-all hover:shadow-md">
+                            <div class="h-10 w-10 bg-secondary-100 dark:bg-secondary-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-building text-secondary-600 dark:text-secondary-400 text-sm"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Apply as Company</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+                                For registered organizations with an EIN, established history and defined mission.
+                            </p>
+                            <a href="company.html" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-secondary-600 to-secondary-700 hover:from-secondary-700 hover:to-secondary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-all duration-200">
+                                Continue
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+            </div>
 </div>
                                 </div>
                 </main>
@@ -1341,26 +1233,10 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
             }, 800);
         };
     </script>
-    
-<script type="module" src="firebase.js"></script>
 
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
-
-  window.fb = { auth, onAuthStateChanged, db, setDoc, doc, serverTimestamp };
-</script>
-
-<script>
+    <script>
   // Listen for auth state (runs on every page load)
-  window.firebase.auth().onAuthStateChanged((user) => {
+  window.fb.onAuthStateChanged(window.fb.auth, (user) => {
     if (user) {
       // User is logged in
       console.log("Logged in user:", user.uid, user.email);
@@ -1407,8 +1283,41 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
     return colors[Math.floor(Math.random() * colors.length)];
   }
 </script>
+    
         
     
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <script>
+        function googleTranslateElementInit() {
+            const options = { pageLanguage: 'en', autoDisplay: false };
+            if (document.getElementById('google_translate_element_desktop')) {
+                new google.translate.TranslateElement(options, 'google_translate_element_desktop');
+            }
+            if (document.getElementById('google_translate_element_mobile')) {
+                new google.translate.TranslateElement(options, 'google_translate_element_mobile');
+            }
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+
+    <!-- Custom Firebase Support Chat -->
+    <link rel="stylesheet" href="chat-widget.css">
+    <script defer src="chat-widget.js"></script>
+
+
     <!-- Mobile Floating Bottom Navbar -->
     <div class="lg:hidden fixed bottom-4 left-4 right-20 z-50">
         <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-2 py-2">
@@ -1445,38 +1354,6 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
             </div>
         </div>
     </div>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    <script>
-        function googleTranslateElementInit() {
-            const options = { pageLanguage: 'en', autoDisplay: false };
-            if (document.getElementById('google_translate_element_desktop')) {
-                new google.translate.TranslateElement(options, 'google_translate_element_desktop');
-            }
-            if (document.getElementById('google_translate_element_mobile')) {
-                new google.translate.TranslateElement(options, 'google_translate_element_mobile');
-            }
-        }
-    </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    
-
-    <!-- Custom Firebase Support Chat -->
-    <link rel="stylesheet" href="chat-widget.css">
-    <script defer src="chat-widget.js"></script>
 
 </body>
 </html>

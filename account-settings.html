@@ -242,13 +242,7 @@
             top: 0 !important;
         }
 
-        @media (max-width: 1024px) {
-            #smartsupp-widget-container,
-            .smartsupp-widget,
-            iframe[title*="Smartsupp"] {
-                display: none !important;
-            }
-        }
+        @media (max-width: 1024px) {}
     </style>
     
     <!-- Ultra Modern Loading Animation -->
@@ -584,6 +578,115 @@
 
     </head>
 
+    <script>
+    // Helper: Safe auth listener that waits until auth is ready
+    function safeAttachAuthListener() {
+        if (!window.auth) {
+            console.warn("auth not ready yet – will retry in 100ms");
+            setTimeout(safeAttachAuthListener, 100);
+            return;
+        }
+
+        console.log("auth is now available – attaching onAuthStateChanged listener");
+
+        // Make sure the global store exists before using it
+        if (!Alpine.store('global')) {
+            console.error("Alpine global store not ready – cannot sync user");
+            return;
+        }
+
+        const g = Alpine.store('global');
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                g.userDisplayName = user.displayName || user.email?.split('@')[0] || 'User';
+                g.userEmail = user.email || '';
+                g.userPhotoURL = user.photoURL || '';
+                console.log("User logged in → store updated:", g.userDisplayName);
+            } else {
+                g.userDisplayName = 'Guest';
+                g.userEmail = '';
+                g.userPhotoURL = '';
+                console.log("No user → reset to Guest");
+            }
+        });
+    }
+
+    // Start sync after Alpine is initialized
+    document.addEventListener('alpine:init', () => {
+        // Create global store if it doesn't exist
+        if (!Alpine.store('global')) {
+            Alpine.store('global', {
+                darkMode: localStorage.getItem('darkMode') === 'true' || false,
+                sidebarOpen: false,
+                mobileMenuOpen: false,
+                notificationOpen: false,
+                userDropdownOpen: false,
+                currentRoute: 'localtransfer',
+
+                userDisplayName: 'Guest',
+                userEmail: '',
+                userPhotoURL: '',
+
+                amount: '',
+                accountname: '',
+                accountnumber: '',
+                bankname: '',
+                Accounttype: 'Online Banking',
+                routing_number: '',
+                swift_code: '',
+                Description: '',
+                pin: '',
+                showPreview: false,
+
+                capitalizeFirstName(name) {
+        if (!name || typeof name !== 'string' || name.trim() === '') {
+            return 'Guest';
+        }
+        const firstName = name.trim().split(/\s+/)[0];
+        return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+    },
+
+                getMaxBalance() {
+                    return 0;
+                },
+
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    localStorage.setItem('darkMode', this.darkMode);
+                    document.documentElement.classList.toggle('dark', this.darkMode);
+                },
+
+                closeDropdowns() {
+                    this.notificationOpen = false;
+                    this.userDropdownOpen = false;
+                },
+
+                getInitials(name) {
+                    if (!name || !name.trim()) return '??';
+                    const words = name.trim().split(/\s+/).filter(w => w);
+                    if (!words.length) return '??';
+                    if (words.length === 1) return (words[0][0] + (words[0][1] || '')).toUpperCase();
+                    return (words[0][0] + words[words.length-1][0]).toUpperCase();
+                },
+
+                toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },
+                toggleNotifications() { this.notificationOpen = !this.notificationOpen; this.userDropdownOpen = false; },
+                toggleUserDropdown() { this.userDropdownOpen = !this.userDropdownOpen; this.notificationOpen = false; },
+                isActiveRoute(route) { return this.currentRoute === route; }
+            });
+
+            console.log("Global Alpine store created");
+        }
+
+        // Apply initial dark mode
+        document.documentElement.classList.toggle('dark', Alpine.store('global').darkMode);
+
+        // Start the safe auth sync
+        safeAttachAuthListener();
+    });
+</script>
+
 <body class="bg-background text-foreground">
     <!-- Ultra Modern Page Loader -->
     <div class="page-loading active">
@@ -863,7 +966,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
             </div>
             
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
+                <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="userDisplayName || 'Guest'"></p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate" x-text="userEmail || 'Not logged in'"></p>
             </div>
                                 
@@ -897,9 +1000,9 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                             <div>
                                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                                         Dashboard                                </h1>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                    Welcome, <span x-text="userDisplayName.split(' ')[0] || 'Guest'"></span>
-                            </p> 
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                Welcome, <span x-text="$store.global.capitalizeFirstName($store.global.userDisplayName)"></span>
+                            </p>
                         </div>
                     </div>
                     
@@ -975,7 +1078,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
 
                                 <!-- Name & Email (hidden on mobile) -->
                                 <div class="hidden md:block text-left">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="userDisplayName || 'Guest'"></p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400" x-text="userEmail"></p>
                                 </div>
 
@@ -1731,7 +1834,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
         
     
     <!-- Mobile Floating Bottom Navbar -->
-    <div class="lg:hidden fixed bottom-4 left-4 right-4 z-50">
+    <div class="lg:hidden fixed bottom-4 left-4 right-20 z-50">
         <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-2 py-2">
             <div class="flex items-center justify-between pointer-events-auto">
                 <!-- Home -->
@@ -1767,18 +1870,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
         </div>
     </div>
 
-    <!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = 'f40d38f04d96f011610307deeebad6ccd6f6427c';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-</script>
-<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
+    
 
 
 
@@ -1805,5 +1897,10 @@ window.smartsupp||(function(d) {
     </script>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
+
+    <!-- Custom Firebase Support Chat -->
+    <link rel="stylesheet" href="chat-widget.css">
+    <script defer src="chat-widget.js"></script>
+
 </body>
 </html>

@@ -3,7 +3,6 @@
 <head>
     <title>Account Login - Prime Vault</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow">
     <meta name="apple-mobile-web-app-title" content="Prime Vault">
     <meta name="application-name" content="Prime Vault">
@@ -119,6 +118,55 @@
             }
         }
     </script>
+
+             <!-- Firebase Compat SDKs – keep these exactly as-is -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<!-- Consolidated & defensive Firebase init + globals -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVyyL243cxKqYYfSiBBpEBiCs3I4iVlHw",
+    authDomain: "prime-vault-bf73d.firebaseapp.com",
+    projectId: "prime-vault-bf73d",
+    storageBucket: "prime-vault-bf73d.firebasestorage.app",
+    messagingSenderId: "317063080962",
+    appId: "1:317063080962:web:875faaeb6ee2af9b3ccb1b",
+    measurementId: "G-FSNK0T2ZD3"
+  };
+
+  // Wait until Firebase is actually loaded (very important in some browsers)
+  function initializeFirebase() {
+    if (typeof firebase === 'undefined') {
+      console.error("Firebase SDK failed to load – check network or adblocker");
+      return;
+    }
+
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log("Firebase initialized");
+      }
+
+      window.auth = firebase.auth();
+      window.db   = firebase.firestore();
+
+      // Quick validation
+      if (window.auth && window.db) {
+        console.log("auth and db globals are now available");
+      } else {
+        console.error("auth or db is still falsy after init");
+      }
+    } catch (err) {
+      console.error("Firebase setup failed:", err.message);
+    }
+  }
+
+
+  initializeFirebase();
+  setTimeout(initializeFirebase, 300); // small delay safety net
+</script>
     
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -643,7 +691,7 @@
                         <i class="fas fa-mobile-alt text-sm"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-semibold">Mobile First</h3>
+                        <h3 class="text-sm font-semibold">Mobile</h3>
                         <p class="text-xs text-white/70">iOS & Android</p>
                     </div>
                 </div>
@@ -685,10 +733,7 @@
                 
                 <!-- Login Form -->
                 <div class="px-6 pb-6 pt-4">
-                    <form method="POST" action="login.html" class="space-y-4" id="login-form">
-                        <input type="hidden" name="_token" value="BrvimcaHe6IUJUmm9XCNgRVfly8N96DyGBHS2lWl">                        <input type="hidden" name="proceed_login" id="proceed_login" value="0">
-                        <input type="hidden" name="account_status_login_token" value="">
-                        <input type="hidden" name="account_status_payload" value="">
+             <form id="login-form" class="space-y-4">
                                                 
                         <!-- Email Field -->
                         <div class="space-y-1">
@@ -761,6 +806,7 @@
                         <div class="pt-2">
                             <button 
                                 type="submit"
+                                id="submit-btn"
                                 class="w-full py-3 px-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 dark:from-primary-700 dark:to-primary-800 dark:hover:from-primary-600 dark:hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center group text-sm">
                                 <i class="fas fa-sign-in-alt mr-2 group-hover:translate-x-1 transition-transform text-sm"></i>
                                 <span>Sign In to Account</span>
@@ -919,6 +965,85 @@
     });
 </script>
 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('login-form');
+  if (!form) {
+    console.error("Login form not found");
+    return;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // ← Prevents page reload
+
+    const email = document.getElementById('email')?.value?.trim();
+    const password = document.getElementById('password')?.value;
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('login-btn-text');
+
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    // Loading state
+    submitBtn.disabled = true;
+    btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Signing in...';
+
+    try {
+      // Use the global firebaseModules from firebase.js
+      const userCredential = await window.firebaseModules.signInWithEmailAndPassword(
+        window.firebaseModules.auth,
+        email,
+        password
+      );
+
+      console.log("Login successful:", userCredential.user.uid, userCredential.user.email);
+
+      // Success - redirect to dashboard
+      alert("Welcome back! Redirecting...");
+      window.location.href = "dashboard.html"; // ← your real dashboard
+
+    } catch (error) {
+      console.error("Firebase login error:", error.code, error.message);
+
+      let message = "Login failed. Please try again.";
+
+      switch (error.code) {
+        case 'auth/invalid-email':
+          message = "Invalid email format.";
+          break;
+        case 'auth/user-not-found':
+        case 'auth/invalid-credential':
+          message = "No account found or incorrect credentials.";
+          break;
+        case 'auth/wrong-password':
+          message = "Incorrect password.";
+          break;
+        case 'auth/too-many-requests':
+          message = "Too many attempts. Try again later.";
+          break;
+        case 'auth/network-request-failed':
+          message = "Network error – check your internet connection.";
+          break;
+        case 'auth/operation-not-allowed':
+          message = "Email/password sign-in is not enabled in Firebase console.";
+          break;
+        default:
+          message = `Error: ${error.message}`;
+      }
+
+      alert(message);
+    } finally {
+      submitBtn.disabled = false;
+      btnText.innerHTML = '<i class="fas fa-sign-in-alt mr-2 group-hover:translate-x-1 transition-transform text-sm"></i><span>Sign In to Account</span>';
+    }
+  });
+});
+</script>
+
 <style>
     .ripple {
         position: absolute;
@@ -944,5 +1069,48 @@
         color: theme('colors.primary.500');
     }
 </style>
+
+    <!-- Mobile Floating Bottom Navbar -->
+    <div class="lg:hidden fixed bottom-4 left-4 right-20 z-50">
+        <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-2 py-2">
+            <div class="flex items-center justify-between pointer-events-auto">
+                <!-- Home -->
+                <a href="dashboard.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-primary-600 dark:text-primary-400">
+                    <i class="fa-solid fa-house mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Home</span>
+                </a>
+                
+                <!-- Activity -->
+                <a href="accounthistory.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-chart-line mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium relative">Activity</span>
+                </a>
+                
+                <!-- Transfer -->
+                <a href="localtransfer.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-paper-plane mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Transfer</span>
+                </a>
+                
+                <!-- Cards -->
+                <a href="cardsection.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-credit-card mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Cards</span>
+                </a>
+                
+                <!-- Profile -->
+                <a href="account-settings.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-user mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Profile</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Custom Firebase Support Chat -->
+    <link rel="stylesheet" href="chat-widget.css">
+    <script defer src="chat-widget.js"></script>
+
 </body>
 </html>

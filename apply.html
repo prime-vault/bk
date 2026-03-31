@@ -836,7 +836,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
         </div>
         
         <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white truncate" x-text="userDisplayName || 'Guest'"></p>
             <p class="text-xs text-gray-500 dark:text-gray-400 truncate" x-text="userEmail || 'Not logged in'"></p>
         </div>
                             
@@ -871,7 +871,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                                     Dashboard                                </h1>
                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                  Welcome, <span x-text="userDisplayName.split(' ')[0] || 'Guest'"></span>
+                                  Welcome, <span x-text="capitalizeFirstName(userDisplayName)"></span>
                           </p>    
                         </div>
                     </div>
@@ -948,7 +948,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
 
                                 <!-- Name & Email (hidden on mobile) -->
                                 <div class="hidden md:block text-left">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="userDisplayName.split(' ')[0] || 'Guest'"></p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white" x-text="userDisplayName || 'Guest'"></p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400" x-text="userEmail"></p>
                                 </div>
 
@@ -1361,18 +1361,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
     </script>
     
         
-    <!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = 'f40d38f04d96f011610307deeebad6ccd6f6427c';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-</script>
-<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
+    
 
 
 
@@ -1445,5 +1434,10 @@ window.smartsupp||(function(d) {
     </script>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
+
+    <!-- Custom Firebase Support Chat -->
+    <link rel="stylesheet" href="chat-widget.css">
+    <script defer src="chat-widget.js"></script>
+
 </body>
 </html>
