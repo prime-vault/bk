@@ -602,10 +602,23 @@
                 g.userEmail = user.email || '';
                 g.userPhotoURL = user.photoURL || '';
                 console.log("User logged in → store updated:", g.userDisplayName);
+                
+                if (g.unsubscribeBalance) g.unsubscribeBalance();
+                g.unsubscribeBalance = window.db.collection('users').doc(user.uid)
+                    .onSnapshot((doc) => {
+                        if (doc.exists) {
+                            const data = doc.data();
+                            if (data.balances) {
+                                g.fiatBalance = parseFloat(data.balances.fiat || 0);
+                            }
+                        }
+                    });
             } else {
                 g.userDisplayName = 'Guest';
                 g.userEmail = '';
                 g.userPhotoURL = '';
+                g.fiatBalance = 0;
+                if (g.unsubscribeBalance) g.unsubscribeBalance();
                 console.log("No user → reset to Guest");
             }
         });
@@ -646,8 +659,11 @@
         return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
     },
 
+                fiatBalance: 0,
+                unsubscribeBalance: null,
+
                 getMaxBalance() {
-                    return 0;
+                    return this.fiatBalance || 0;
                 },
 
                 toggleDarkMode() {
@@ -1495,7 +1511,7 @@
                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">Save as Beneficiary</h3>
             </div>
             <button 
-                @click="$store.global.showBeneficiaryForm = false; resetBeneficiaryForm()"
+                @click="showBeneficiaryForm = false; resetBeneficiaryForm()"
                 class="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 transition-colors"
             >
                 <i class="fas fa-times"></i>
@@ -1507,7 +1523,7 @@
                 <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Beneficiary Name</label>
                 <input 
                     type="text" 
-                    x-model="$store.global.beneficiaryName"
+                    x-model="beneficiaryName"
                     class="block w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     placeholder="Enter a name for this beneficiary"
                 />
@@ -1517,7 +1533,7 @@
                 <label class="flex items-center">
                     <input 
                         type="checkbox" 
-                        x-model="$store.global.beneficiaryIsFavorite"
+                        x-model="beneficiaryIsFavorite"
                         class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                     />
                     <span class="ml-2 text-xs text-gray-700 dark:text-gray-300">Mark as favorite</span>
@@ -1526,8 +1542,8 @@
 
             <div class="flex space-x-2">
                 <button 
-                    @click="$store.global.saveBeneficiary()"
-                    :disabled="!($store.global.beneficiaryName || '').trim() || $store.global.savingBeneficiary"
+                    @click="saveBeneficiary()"
+                    :disabled="!(beneficiaryName || '').trim() || savingBeneficiary"
                     class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <template x-if="!savingBeneficiary">
@@ -1544,7 +1560,7 @@
                     </template>
                 </button>
                 <button 
-                    @click="$store.global.showBeneficiaryForm = false; resetBeneficiaryForm()"
+                    @click="showBeneficiaryForm = false; resetBeneficiaryForm()"
                     class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
                 >
                     Cancel
@@ -1584,7 +1600,7 @@
                             
                             <div class="space-y-1">
                                 <div class="flex items-baseline space-x-1">
-                                    <span class="text-2xl font-bold text-gray-900 dark:text-white">$0.00</span>
+                                    <span class="text-2xl font-bold text-gray-900 dark:text-white" x-text="'$' + parseFloat($store.global.fiatBalance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})">$0.00</span>
                                 </div>
                                 <div class="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
                                     <i class="fas fa-circle text-green-500 text-xs"></i>
@@ -2430,6 +2446,35 @@
                 }
 
                 // Continue with transfer logic...
+                const userDocRef = window.db.doc('users/' + user.uid);
+                const userDocSnap = await userDocRef.get();
+                
+                const currentFiat = parseFloat(userDocSnap.data().balances?.fiat || 0);
+
+                if (currentFiat < amount) {
+                    processingModal.classList.add('hidden');
+                    alert("Insufficient funds.");
+                    return;
+                }
+
+                await userDocRef.update({
+                    'balances.fiat': currentFiat - amount
+                });
+
+                const txRef = window.db.collection('users').doc(user.uid).collection('transactions').doc();
+                await txRef.set({
+                    id: txRef.id,
+                    amount: amount,
+                    type: "Transfer",
+                    status: "Completed",
+                    date: window.firebase.firestore.FieldValue.serverTimestamp(),
+                    recipient: accountname,
+                    account_number: accountnumber,
+                    bank_name: bankname,
+                    method: 'Local Transfer',
+                    description: g.Description || ''
+                });
+
                 await new Promise(r => setTimeout(r, 800)); // simulate delay
                 processingModal.classList.add('hidden');
                 alert("Transfer successful!\nAmount: $" + amount.toFixed(2) + "\nTo: " + accountname);
