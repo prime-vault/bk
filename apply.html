@@ -575,6 +575,115 @@
 
     </head>
 
+     <script>
+    // Helper: Safe auth listener that waits until auth is ready
+    function safeAttachAuthListener() {
+        if (!window.auth) {
+            console.warn("auth not ready yet â€“ will retry in 100ms");
+            setTimeout(safeAttachAuthListener, 100);
+            return;
+        }
+
+        console.log("auth is now available â€“ attaching onAuthStateChanged listener");
+
+        // Make sure the global store exists before using it
+        if (!Alpine.store('global')) {
+            console.error("Alpine global store not ready â€“ cannot sync user");
+            return;
+        }
+
+        const g = Alpine.store('global');
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                g.userDisplayName = user.displayName || user.email?.split('@')[0] || 'User';
+                g.userEmail = user.email || '';
+                g.userPhotoURL = user.photoURL || '';
+                console.log("User logged in â†’ store updated:", g.userDisplayName);
+            } else {
+                g.userDisplayName = 'Guest';
+                g.userEmail = '';
+                g.userPhotoURL = '';
+                console.log("No user â†’ reset to Guest");
+            }
+        });
+    }
+
+    // Start sync after Alpine is initialized
+    document.addEventListener('alpine:init', () => {
+        // Create global store if it doesn't exist
+        if (!Alpine.store('global')) {
+            Alpine.store('global', {
+                darkMode: localStorage.getItem('darkMode') === 'true' || false,
+                sidebarOpen: false,
+                mobileMenuOpen: false,
+                notificationOpen: false,
+                userDropdownOpen: false,
+                currentRoute: 'localtransfer',
+
+                userDisplayName: 'Guest',
+                userEmail: '',
+                userPhotoURL: '',
+
+                amount: '',
+                accountname: '',
+                accountnumber: '',
+                bankname: '',
+                Accounttype: 'Online Banking',
+                routing_number: '',
+                swift_code: '',
+                Description: '',
+                pin: '',
+                showPreview: false,
+
+                capitalizeFirstName(name) {
+        if (!name || typeof name !== 'string' || name.trim() === '') {
+            return 'Guest';
+        }
+        const firstName = name.trim().split(/\s+/)[0];
+        return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+    },
+
+                getMaxBalance() {
+                    return 0;
+                },
+
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    localStorage.setItem('darkMode', this.darkMode);
+                    document.documentElement.classList.toggle('dark', this.darkMode);
+                },
+
+                closeDropdowns() {
+                    this.notificationOpen = false;
+                    this.userDropdownOpen = false;
+                },
+
+                getInitials(name) {
+                    if (!name || !name.trim()) return '??';
+                    const words = name.trim().split(/\s+/).filter(w => w);
+                    if (!words.length) return '??';
+                    if (words.length === 1) return (words[0][0] + (words[0][1] || '')).toUpperCase();
+                    return (words[0][0] + words[words.length-1][0]).toUpperCase();
+                },
+
+                toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },
+                toggleNotifications() { this.notificationOpen = !this.notificationOpen; this.userDropdownOpen = false; },
+                toggleUserDropdown() { this.userDropdownOpen = !this.userDropdownOpen; this.notificationOpen = false; },
+                isActiveRoute(route) { return this.currentRoute === route; }
+            });
+
+            console.log("Global Alpine store created");
+        }
+
+        // Apply initial dark mode
+        document.documentElement.classList.toggle('dark', Alpine.store('global').darkMode);
+
+        // Start the safe auth sync
+        safeAttachAuthListener();
+    });
+</script>
+
 <body class="bg-background text-foreground">
     <!-- Ultra Modern Page Loader -->
     <div class="page-loading active">
@@ -698,7 +807,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
                 <!-- Desktop Layout -->
         <div class="flex h-screen">
             <!-- Desktop Sidebar -->
-            <div class="w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 flex flex-col shadow-xl">
+            <div class="hidden lg:flex lg:flex-col w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 shadow-xl">
                 <!-- Logo Section -->
                 <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
                     <div class="flex items-center space-x-3">
@@ -845,7 +954,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
         <button 
             @click="auth.signOut().then(() => {
                 console.log('Signed out successfully');
-                window.location.href = '/login.html';  // ← change to your actual login page path
+                window.location.href = '/login.html';  // â† change to your actual login page path
             }).catch((error) => {
                 console.error('Logout error:', error);
                 alert('Logout failed: ' + error.message);
@@ -861,18 +970,18 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
                     </div>
                     
             <!-- Desktop Main Content -->
-            <div class="flex-1 flex flex-col">
-                <!-- Desktop Header -->
+            <div class="flex-1 flex flex-col w-full min-w-0 pb-16 lg:pb-0">
+                <!-- Main Header -->
                 <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 shadow-sm relative z-50">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between w-full">
                         <!-- Page Title & Breadcrumb -->
                     <div class="flex items-center space-x-4">
                             <div>
                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                                     Dashboard                                </h1>
                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                  Welcome, <span x-text="capitalizeFirstName(userDisplayName)"></span>
-                          </p>    
+                                Welcome, <span x-text="$store.global.capitalizeFirstName($store.global.userDisplayName)"></span>
+                            </p>  
                         </div>
                     </div>
                     
@@ -1405,8 +1514,8 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
       document.querySelectorAll('.show-when-logged-out').forEach(el => el.style.display = 'none');
 
     } else {
-      // No user → redirect to login
-      console.log("No user logged in → redirecting");
+      // No user â†’ redirect to login
+      console.log("No user logged in â†’ redirecting");
       window.location.href = "login.html";
     }
   });
@@ -1439,5 +1548,146 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">0">
     <link rel="stylesheet" href="chat-widget.css">
     <script defer src="chat-widget.js"></script>
 
+<!-- Mobile Floating Bottom Navbar -->
+    <div class="lg:hidden fixed bottom-4 left-4 right-4 z-50">
+        <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-2 py-2">
+            <div class="flex items-center justify-between pointer-events-auto">
+                <!-- Home -->
+                <a href="dashboard.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-primary-600 dark:text-primary-400">
+                    <i class="fa-solid fa-house mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Home</span>
+                </a>
+                
+                <!-- Activity -->
+                <a href="accounthistory.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-chart-line mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium relative">Activity</span>
+                </a>
+                
+                <!-- Transfer -->
+                <a href="localtransfer.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-paper-plane mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Transfer</span>
+                </a>
+                
+                <!-- Cards -->
+                <a href="cardsection.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-credit-card mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Cards</span>
+                </a>
+                
+                <!-- Profile -->
+                <a href="account-settings.html" class="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    <i class="fa-solid fa-user mb-1 text-lg"></i>
+                    <span class="text-[10px] font-medium">Profile</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <script>
+        function googleTranslateElementInit() {
+            const options = { pageLanguage: 'en', autoDisplay: false };
+            if (document.getElementById('google_translate_element_desktop')) {
+                new google.translate.TranslateElement(options, 'google_translate_element_desktop');
+            }
+            if (document.getElementById('google_translate_element_mobile')) {
+                new google.translate.TranslateElement(options, 'google_translate_element_mobile');
+            }
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+
+    
+    <!-- Status Modal -->
+    <div id="statusModal" class="fixed inset-0 z-[99999] hidden bg-gray-900/50 backdrop-blur-sm overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-200 dark:border-gray-700">
+                <div class="px-6 py-8 text-center" id="statusModalInactive" style="display:none;">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/30 mb-6 border border-red-200 dark:border-red-800">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-600 dark:text-red-400"></i>
+                    </div>
+                    <h3 class="text-xl leading-6 font-bold text-gray-900 dark:text-white mb-2">Account Status</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium whitespace-pre-line">Your account is currently inactive.
+please contact support for assistance</p>
+                    <button type="button" onclick="document.getElementById('statusModal').classList.add('hidden')" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-3 bg-red-600 text-base font-semibold text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                        Okay
+                    </button>
+                </div>
+                
+                <div class="px-6 py-8 text-center" id="statusModalActive" style="display:none;">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-6 border border-green-200 dark:border-green-800">
+                        <i class="fas fa-check text-2xl text-green-600 dark:text-green-400"></i>
+                    </div>
+                    <h3 class="text-xl leading-6 font-bold text-gray-900 dark:text-white mb-2">Application Submitted</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium whitespace-pre-line">Your application is under review and you will be notified soon
+for further important, please contact support for assistance</p>
+                    <button type="button" onclick="document.getElementById('statusModal').classList.add('hidden')" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-3 bg-primary-600 text-base font-semibold text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                        Okay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                if (form.getAttribute('action') !== 'loan.html' && form.getAttribute('id') !== 'card-application-form') {
+                    if (!window.location.pathname.includes('apply.html') && !window.location.pathname.includes('loan.html')) return;
+                    if (form.querySelector('button[type="submit"]') && form.querySelector('button[type="submit"]').textContent.toLowerCase().includes('sign out')) return;
+                    if (form.innerText.toLowerCase().includes('sign out')) return;
+                }
+                
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                
+                if (!window.firebase || !window.firebase.auth().currentUser) {
+                    alert("Please log in first.");
+                    return;
+                }
+                
+                const userDocRef = window.db.collection('users').doc(window.firebase.auth().currentUser.uid);
+                userDocRef.get().then((doc) => {
+                    const modal = document.getElementById('statusModal');
+                    const inactiveDiv = document.getElementById('statusModalInactive');
+                    const activeDiv = document.getElementById('statusModalActive');
+                    
+                    if (doc.exists && doc.data().kycStatus === 'active') {
+                        inactiveDiv.style.display = 'none';
+                        activeDiv.style.display = 'block';
+                        modal.classList.remove('hidden');
+                    } else {
+                        inactiveDiv.style.display = 'block';
+                        activeDiv.style.display = 'none';
+                        modal.classList.remove('hidden');
+                    }
+                }).catch((error) => {
+                    console.error("Error fetching user status:", error);
+                    alert("Unable to verify account status. Please try again.");
+                });
+            });
+        });
+    });
+    </script>
 </body>
 </html>
+

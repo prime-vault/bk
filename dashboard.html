@@ -665,6 +665,7 @@
     memberSince: '',
     accountNumberFull: '',
     accountNumberMasked: '•••• ••••',
+    kycStatus: 'inactive',
 
     // New method for capitalizing first name
     capitalizeFullName(name) {
@@ -730,11 +731,20 @@
                 } else {
                     this.memberSince = 'Unknown';
                 }
+                
+                if (window.db) {
+                    window.db.collection('users').doc(user.uid).onSnapshot(doc => {
+                        if (doc.exists && doc.data().kycStatus) {
+                            this.kycStatus = doc.data().kycStatus;
+                        }
+                    });
+                }
             } else {
                 this.userDisplayName = 'Guest';
                 this.userEmail = '';
                 this.userPhotoURL = '';
                 this.memberSince = '';
+                this.kycStatus = 'inactive';
             }
         });
     },
@@ -1040,7 +1050,7 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                                     </div>
 
                                     <!-- KYC Warning -->
-                                    <div class="mt-4">
+                                    <div class="mt-4" x-show="kycStatus !== 'active'">
                                         <a href="verify-account.html" class="flex items-center justify-center py-2 rounded-xl bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
                                             <span class="text-xs text-red-800 dark:text-red-300 font-semibold flex items-center">
                                                 <i class="fa-solid fa-exclamation-triangle text-red-600 dark:text-red-400 mr-2"></i> Verify KYC
@@ -1155,8 +1165,8 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                     <div class="flex items-center justify-between text-xs text-white/60 mt-2">
                         <span>Status</span>
                         <span class="inline-flex items-center">
-                            <span class="h-2 w-2 rounded-full bg-red-400 mr-2"></span>
-                            Inactive
+                            <span class="h-2 w-2 rounded-full mr-2" :class="kycStatus === 'active' ? 'bg-green-400' : 'bg-red-400'"></span>
+                            <span x-text="kycStatus === 'active' ? 'Active' : 'Inactive'">Inactive</span>
                         </span>
                     </div>
                 </div>
@@ -2080,10 +2090,10 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                     <p class="text-xl font-semibold leading-tight" x-text="userDisplayName"></p>
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center space-x-3">
-                            <span class="w-2.5 h-2.5 rounded-full bg-red-300"></span>
-                            <span class="font-semibold">Inactive</span>
+                            <span class="w-2.5 h-2.5 rounded-full" :class="kycStatus === 'active' ? 'bg-green-400' : 'bg-red-300'"></span>
+                            <span class="font-semibold" x-text="kycStatus === 'active' ? 'Active' : 'Inactive'">Inactive</span>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-3" x-show="kycStatus !== 'active'">
                             <span class="w-2.5 h-2.5 rounded-full bg-amber-300"></span>
                             <span class="font-semibold">Verification Pending</span>
                         </div>
