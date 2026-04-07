@@ -650,6 +650,7 @@
                 Description: '',
                 pin: '',
                 showPreview: false,
+                showSummary: false,
 
                 capitalizeFirstName(name) {
         if (!name || typeof name !== 'string' || name.trim() === '') {
@@ -1413,7 +1414,7 @@
     <div class="flex justify-between items-center mb-3">
         <h3 class="text-base font-semibold text-gray-900 dark:text-white">Quick Transfer</h3>
         <button 
-            @click="$store.global.loadBeneficiaries()"
+            @click="loadBeneficiaries()"
             class="text-xs text-primary-600 dark:text-primary-400 font-medium flex items-center hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
         >
             <i class="fa-solid fa-refresh mr-1 text-xs" :class="{'fa-spin': loading}"></i>
@@ -1574,7 +1575,7 @@
     [x-cloak] { display: none !important; }
 </style>                    </div>
                     
-                <form @submit.prevent="showPreview = true" id="transferForm">                  
+                <form @submit.prevent="" id="transferForm">                  
                     <!-- Account Balance Display -->
                     <div class="space-y-4">
                         <div class="flex items-center space-x-2 mb-1">
@@ -1650,8 +1651,8 @@
                                 <div class="flex flex-wrap gap-2">
                                     <button type="button" @click="$store.global.amount = '100'" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/50 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600">$100</button>
                                     <button type="button" @click="$store.global.amount = '500'" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/50 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600">$500</button>
-                                    <button type="button" @click="amount = '1000'" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/50 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600">$1000</button>
-                                    <button type="button" @click="$store.global.amount = Math.floor(0)" class="px-3 py-1.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-lg text-xs font-medium text-white transition-all duration-200 shadow-sm hover:shadow-md">
+                                    <button type="button" @click="$store.global.amount = '1000'" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/50 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600">$1000</button>
+                                    <button type="button" @click="$store.global.amount = $store.global.fiatBalance" class="px-3 py-1.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-lg text-xs font-medium text-white transition-all duration-200 shadow-sm hover:shadow-md">
                                         <i class="fas fa-wallet mr-1"></i>All
                                     </button>
                                 </div>
@@ -1878,7 +1879,7 @@
                     </div>
                     
                     <!-- Transfer Summary -->
-                    <div x-show="amount > 0" class="bg-gradient-to-br from-primary-50/80 to-blue-50/80 dark:from-primary-900/30 dark:to-slate-800/60 backdrop-blur-sm rounded-xl border border-primary-200/50 dark:border-primary-700/50 p-4 shadow-lg mt-4">
+                    <div x-show="$store.global.showSummary" x-transition class="bg-gradient-to-br from-primary-50/80 to-blue-50/80 dark:from-primary-900/30 dark:to-slate-800/60 backdrop-blur-sm rounded-xl border border-primary-200/50 dark:border-primary-700/50 p-4 shadow-lg mt-4">
                         <div class="flex items-center space-x-2 mb-4">
                             <div class="w-6 h-6 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center">
                                 <i class="fas fa-receipt text-white text-xs"></i>
@@ -1924,30 +1925,55 @@
                     <!-- Action Buttons -->
                     <div class="flex flex-col lg:flex-row lg:space-x-3 space-y-2 lg:space-y-0 pt-4">
                         <button 
-                            type="submit" 
+                            type="button" 
+                            @click="$store.global.showSummary = true"
+                            x-show="!$store.global.showSummary"
                             class="w-full lg:flex-1 inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
-                            :disabled="!$store.global.amount || !$store.global.accountname || !$store.global.accountnumber || !bankname || !pin"
-                            :class="{ 'opacity-60 cursor-not-allowed hover:scale-100': !amount || !accountname || !accountnumber || !bankname || !pin }"
+                            :disabled="!$store.global.amount || !$store.global.accountname || !$store.global.accountnumber || !$store.global.bankname || !$store.global.pin"
+                            :class="{ 'opacity-60 cursor-not-allowed hover:scale-100': !$store.global.amount || !$store.global.accountname || !$store.global.accountnumber || !$store.global.bankname || !$store.global.pin }"
                         >
                             <i class="fas fa-eye mr-2"></i>
                             Preview Transfer
                         </button>
+
+                        <button 
+                            type="button" 
+                            x-show="$store.global.showSummary"
+                            id="confirmTransferBtnLoc"
+                            class="w-full lg:flex-1 inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Confirm Transfer
+                        </button>
+                        
+                        <button 
+                            type="button" 
+                            x-show="$store.global.showSummary"
+                            @click="$store.global.showSummary = false"
+                            class="w-full lg:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm text-base font-semibold text-gray-700 dark:text-gray-300 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-600/70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200"
+                        >
+                            <i class="fas fa-times mr-2 text-gray-400 dark:text-gray-500"></i>
+                            Cancel
+                        </button>
+
                         <button 
                             type="button"
+                            x-show="!$store.global.showSummary"
                             @click="$store.global.window.dispatchEvent(new CustomEvent('show-beneficiary-form'))"
                             :disabled="!$store.global.accountname || !$store.global.accountnumber || !$store.global.bankname"
                             class="w-full lg:w-auto inline-flex items-center justify-center px-6 py-3 border border-blue-300 dark:border-blue-600 rounded-xl shadow-sm text-base font-semibold text-blue-700 dark:text-blue-300 bg-blue-50/70 dark:bg-blue-900/20 backdrop-blur-sm hover:bg-blue-100 dark:hover:bg-blue-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                            :class="{ 'opacity-50 cursor-not-allowed': !accountname || !accountnumber || !bankname }"
+                            :class="{ 'opacity-50 cursor-not-allowed': !$store.global.accountname || !$store.global.accountnumber || !$store.global.bankname }"
                         >
                             <i class="fas fa-bookmark mr-2"></i>
                             Save Beneficiary
                         </button>
                         <a 
                             href="dashboard.html" 
+                            x-show="!$store.global.showSummary"
                             class="w-full lg:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm text-base font-semibold text-gray-700 dark:text-gray-300 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-600/70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-300"
                         >
                             <i class="fas fa-arrow-left mr-2"></i>
-                            Back to Dashboard
+                            Back
                         </a>
                     </div>
                 </form>
@@ -2332,10 +2358,10 @@
     // Main confirmation + processing logic
     document.addEventListener('DOMContentLoaded', () => {
         const confirmBtn = document.getElementById('confirmTransferBtn');
-        if (!confirmBtn) return;
-
-        confirmBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        const confirmBtnLoc = document.getElementById('confirmTransferBtnLoc'); // from main form
+        
+        const startTransfer = async (e) => {
+            if (e) e.preventDefault();
 
             // Get current values from global store
             const g = Alpine.store('global') || {};
@@ -2484,7 +2510,9 @@
                 g.accountname = '';
                 g.accountnumber = '';
                 g.bankname = '';
+                g.pin = '';
                 g.showPreview = false;
+                g.showSummary = false;
 
             } catch (err) {
                 console.error("Transfer process failed:", err);
@@ -2494,7 +2522,10 @@
             })();
                 }
             }, intervalMs);
-        });
+        };
+
+        if (confirmBtn) confirmBtn.addEventListener('click', startTransfer);
+        if (confirmBtnLoc) confirmBtnLoc.addEventListener('click', startTransfer);
     });
 
     // Reliable loader hide (multiple triggers)
