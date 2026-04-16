@@ -484,6 +484,12 @@
             if (error.code === 'auth/network-request-failed') msg = "Network error – check your connection.";
             if (error.code === 'auth/operation-not-allowed') msg = "Sign-in method not enabled in Firebase.";
 
+            const statusEl = document.getElementById('login-status');
+            if (statusEl) {
+              statusEl.textContent = msg;
+              statusEl.classList.remove('hidden');
+              statusEl.className = 'text-sm font-medium text-center mt-2 text-red-500 block';
+            }
         
           } finally {
             submitBtn.disabled = false;
