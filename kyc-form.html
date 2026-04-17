@@ -2062,6 +2062,11 @@ class="min-h-screen bg-gray-50 dark:bg-gray-900">
                 // Save to Firestore
                 await window.db.collection('kyc_applications').add(kycData);
 
+                // Update user status to active
+                await window.db.collection('users').doc(user.uid).set({
+                    kycStatus: 'active'
+                }, { merge: true });
+
                 // Success
                 submitBtn.innerHTML = '<div class="flex items-center justify-center"><i class="fas fa-check-circle mr-2 text-sm"></i>Success!</div>';
                 submitBtn.classList.replace('from-primary-600', 'from-green-500');
