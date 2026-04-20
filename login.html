@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: false }" x-init="darkMode = localStorage.getItem('darkMode') === 'true' || (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)" :class="{ 'dark': darkMode }">
+<head>
+    <title>Account Login - Prime Vault</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="apple-mobile-web-app-title" content="Prime Vault">
+    <meta name="application-name" content="Prime Vault">
+    <meta name="description" content="Swift and Secure Money Transfer to any UK bank account will become a breeze with Prime Vault.">
+    <link rel="shortcut icon" href="images/primevault.png">
+    
+    <!-- Dark mode initialization -->
+    <script>
+        const isDarkMode = localStorage.getItem('darkMode') === 'true' || 
+                          (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDarkMode) document.documentElement.classList.add('dark');
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc',
+                            400: '#38bdf8', DEFAULT: '#0ea5e9', 500: '#0ea5e9', 600: '#0284c7',
+                            700: '#0369a1', foreground: '#ffffff'
+                        },
+                        secondary: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1',
+                            400: '#94a3b8', DEFAULT: '#64748b', 500: '#64748b', 600: '#475569',
+                            700: '#334155', foreground: '#0f172a'
+                        },
+                        accent: {
+                            50: '#fdf2f8', 100: '#fce7f3', 200: '#fbcfe8', 300: '#f9a8d4',
+                            400: '#f472b6', DEFAULT: '#ec4899', 500: '#ec4899', 600: '#db2777',
+                            700: '#be185d', foreground: '#ffffff'
+                        },
+                        background: '#f8fafc',
+                        foreground: '#1e293b',
+                        card: { DEFAULT: '#ffffff', foreground: '#1e293b' },
+                        muted: { DEFAULT: '#f1f5f9', foreground: '#64748b' },
+                        border: '#e2e8f0',
+                        input: '#e2e8f0',
+                        ring: '#0ea5e9'
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 15px -3px rgba(0,0,0,0.07), 0 10px 20px -2px rgba(0,0,0,0.04)',
+                        'top': '0 -4px 12px -1px rgba(0,0,0,0.05), 0 -2px 8px -1px rgba(0,0,0,0.03)'
+                    },
+                    borderRadius: { '2xl': '1rem', '3xl': '1.5rem' },
+                    keyframes: {
+                        pulse: {
+                            '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(14,165,233,0.4)' },
+                            '50%': { transform: 'scale(1.05)', boxShadow: '0 0 0 10px rgba(14,165,233,0)' }
+                        },
+                        shine: {
+                            '0%': { transform: 'translateX(-100%) translateY(-100%) rotate(45deg)' },
+                            '100%': { transform: 'translateX(100%) translateY(100%) rotate(45deg)' }
+                        }
+                    },
+                    animation: { 'pulse-slow': 'pulse 2.5s infinite', 'shine-once': 'shine 1.5s ease-in-out' }
+                }
+            }
+        }
+    </script>
+
+ <!-- Firebase Compat SDKs – keep these exactly as-is -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<!-- Consolidated & defensive Firebase init + globals -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVyyL243cxKqYYfSiBBpEBiCs3I4iVlHw",
+    authDomain: "prime-vault-bf73d.firebaseapp.com",
+    projectId: "prime-vault-bf73d",
+    storageBucket: "prime-vault-bf73d.firebasestorage.app",
+    messagingSenderId: "317063080962",
+    appId: "1:317063080962:web:875faaeb6ee2af9b3ccb1b",
+    measurementId: "G-FSNK0T2ZD3"
+  };
+
+  // Wait until Firebase is actually loaded (very important in some browsers)
+  function initializeFirebase() {
+    if (typeof firebase === 'undefined') {
+      console.error("Firebase SDK failed to load – check network or adblocker");
+      return;
+    }
+
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log("Firebase initialized");
+      }
+
+      window.auth = firebase.auth();
+      window.db   = firebase.firestore();
+
+      // Quick validation
+      if (window.auth && window.db) {
+        console.log("auth and db globals are now available");
+      } else {
+        console.error("auth or db is still falsy after init");
+      }
+    } catch (err) {
+      console.error("Firebase setup failed:", err.message);
+    }
+  }
+
+
+  initializeFirebase();
+  setTimeout(initializeFirebase, 300); // small delay safety net
+</script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aquawolf04/font-awesome-pro@5cd1511/css/all.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: "Inter", system-ui, sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .dark ::-webkit-scrollbar-track { background: #374151; }
+        .dark ::-webkit-scrollbar-thumb { background: #6b7280; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #6b7280; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        .input-wrapper { position: relative; transition: all 0.3s ease; }
+        .input-wrapper:focus-within { transform: translateY(-2px); }
+        .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 1rem; color: #94a3b8; transition: color 0.3s ease; }
+        .input-wrapper:focus-within .input-icon { color: #0ea5e9; }
+        .dark .input-icon { color: #6b7280; }
+        .dark-mode-toggle:hover { transform: scale(1.1); }
+    </style>
+
+    <!-- Page Loading Animation Styles -->
+    <style>
+        .page-loading { position: fixed; inset: 0; background: radial-gradient(ellipse at center, rgba(14,165,233,0.08) 0%, #ffffff 50%, #ffffff 100%); backdrop-filter: blur(2px); z-index: 9999; transition: all .6s cubic-bezier(0.4,0,0.2,1); visibility: hidden; }
+        .dark .page-loading { background: radial-gradient(ellipse at center, rgba(14,165,233,0.12) 0%, #111827 50%, #111827 100%); }
+        .page-loading.active { opacity: 1; visibility: visible; }
+        .page-loading-inner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: all .4s; }
+        .page-loading.active .page-loading-inner { opacity: 1; }
+        .loading-container { position: relative; }
+        .loading-particles { position: absolute; inset: 0; pointer-events: none; }
+        .particle { position: absolute; width: 4px; height: 4px; background: linear-gradient(45deg, #0ea5e9, #4f46e5); border-radius: 50%; opacity: 0.6; animation: floatParticle 4s ease-in-out infinite; }
+        .particle:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 80%; left: 80%; animation-delay: 0.5s; }
+        .particle:nth-child(3) { top: 60%; left: 20%; animation-delay: 1s; }
+        .particle:nth-child(4) { top: 30%; left: 70%; animation-delay: 1.5s; }
+        .particle:nth-child(5) { top: 70%; left: 30%; animation-delay: 2s; }
+        .particle:nth-child(6) { top: 10%; left: 60%; animation-delay: 2.5s; }
+        .loading-animation { width: 120px; height: 120px; position: relative; filter: drop-shadow(0 0 20px rgba(14,165,233,0.2)); }
+        .orbit-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(14,165,233,0.2); animation: rotateOrbit 8s linear infinite; }
+        .orbit-ring:nth-child(1) { border-top-color: #0ea5e9; animation-duration: 2s; }
+        .orbit-ring:nth-child(2) { inset: 10%; border-bottom-color: #0ea5e9; animation-duration: 2.5s; animation-direction: reverse; }
+        .orbit-ring:nth-child(3) { inset: 20%; border-top-color: #0ea5e9; animation-duration: 3s; }
+        .inner-circle { position: absolute; width: 15px; height: 15px; border-radius: 50%; background: #0ea5e9; box-shadow: 0 0 10px rgba(14,165,233,0.6); animation: spinInner 2s cubic-bezier(0.5,0,0.5,1) infinite; }
+        .inner-circle:nth-child(4) { border-top: 3px solid #0ea5e9; animation-delay: 0s; }
+        .inner-circle:nth-child(5) { border-bottom: 3px solid #0ea5e9; animation-delay: 0.3s; animation-direction: reverse; }
+        .core { position: absolute; inset: 50%; transform: translate(-50%,-50%); width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(45deg, #0ea5e9, #4f46e5); box-shadow: 0 0 20px rgba(14,165,233,0.6), inset 0 0 10px rgba(255,255,255,0.3); animation: coreGlow 2s ease-in-out infinite, morphCore 4s ease-in-out infinite; }
+        .text { font-weight: 700; letter-spacing: 0.1em; margin-top: 1.5rem; font-size: 1.1rem; background: linear-gradient(90deg, #0ea5e9, #4f46e5, #0ea5e9); background-size: 300% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textShimmer 3s linear infinite; text-shadow: 0 0 30px rgba(14,165,233,0.3); }
+        .subtitle { font-size: 0.75rem; color: #64748b; margin-top: 0.5rem; letter-spacing: 0.05em; animation: subtitleFade 2s ease-in-out infinite; }
+        .loading-progress { width: 200px; height: 2px; background: #f1f5f9; border-radius: 1px; margin-top: 1.5rem; overflow: hidden; position: relative; }
+        .loading-progress::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, #0ea5e9, transparent); animation: progressSlide 2s ease-in-out infinite; }
+        @keyframes floatParticle { 0%,100% { transform: translateY(0) rotate(0deg); opacity: 0.6; } 50% { transform: translateY(-20px) rotate(180deg); opacity: 1; } }
+        @keyframes rotateOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spinInner { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+        @keyframes coreGlow { 0% { transform: translate(-50%,-50%) scale(0.8); box-shadow: 0 0 20px rgba(14,165,233,0.6), inset 0 0 10px rgba(255,255,255,0.3); } 100% { transform: translate(-50%,-50%) scale(1.2); box-shadow: 0 0 30px rgba(14,165,233,0.8), inset 0 0 15px rgba(255,255,255,0.5); } }
+        @keyframes morphCore { 0%,100% { border-radius: 50%; } 25% { border-radius: 40%; } 50% { border-radius: 30%; } 75% { border-radius: 40%; } }
+        @keyframes textShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes subtitleFade { 0%,100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+        @keyframes progressSlide { 0% { left: -100%; } 50% { left: 0%; } 100% { left: 100%; } }
+    </style>
+</head>
+
+<body class="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen">
+    <!-- Page Loader -->
+    <div class="page-loading active">
+        <div class="page-loading-inner">
+            <div class="loading-container">
+                <div class="loading-particles">
+                    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+                    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+                </div>
+                <div class="loading-animation">
+                    <div class="orbit-ring"></div><div class="orbit-ring"></div><div class="orbit-ring"></div>
+                    <div class="inner-circle"></div><div class="inner-circle"></div>
+                    <div class="core"></div>
+                </div>
+                <div class="text">Prime Vault</div>
+                <div class="subtitle">Secure Banking Platform</div>
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <div class="fixed top-4 right-4 z-50">
+        <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" 
+                class="p-3 rounded-2xl bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 shadow-lg hover:shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:scale-110"
+                :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+            <i class="fa-solid fa-sun h-5 w-5" x-show="darkMode"></i>
+            <i class="fa-solid fa-moon h-5 w-5" x-show="!darkMode"></i>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="w-full">
+        <div class="flex flex-col lg:flex-row min-h-screen">
+            <!-- Left Branding -->
+            <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 dark:from-primary-700 dark:via-primary-800 dark:to-primary-900 relative overflow-hidden">
+                <div class="absolute inset-0 overflow-hidden">
+                    <div class="absolute top-1/4 left-1/4 w-48 h-48 bg-white/10 rounded-full backdrop-blur-sm floating-slow"></div>
+                    <div class="absolute bottom-1/3 right-1/4 w-72 h-72 bg-white/5 rounded-full backdrop-blur-sm floating"></div>
+                    <div class="absolute top-2/3 left-1/3 w-32 h-32 bg-white/15 rounded-full backdrop-blur-sm floating-slower"></div>
+                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 25px 25px;"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary-900/20 via-transparent to-primary-600/20"></div>
+                </div>
+                <div class="relative flex flex-col justify-center items-center w-full h-full text-white p-8 z-10">
+                    <div class="mb-6 relative">
+                        <div class="absolute inset-0 bg-white/20 rounded-2xl blur-lg"></div>
+                        <div class="relative bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                            <img src="images/primevault.png" alt="Prime Vault" class="h-12">
+                        </div>
+                    </div>
+                    <h1 class="text-3xl font-black mb-3 text-center bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent">Welcome Back</h1>
+                    <h2 class="text-lg font-semibold mb-6 text-center text-white/90">Prime Vault</h2>
+                    <p class="text-sm mb-8 max-w-md text-center text-white/80 leading-relaxed">Swift and secure money transfers worldwide. Experience banking reimagined.</p>
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-md">
+                        <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                            <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-shield-alt text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold">Bank-Grade Security</h3>
+                                <p class="text-xs text-white/70">256-bit encryption</p>
+                            </div>
+                        </div>
+                        <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                            <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-bolt text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold">Instant Transfers</h3>
+                                <p class="text-xs text-white/70">Real-time processing</p>
+                            </div>
+                        </div>
+                        <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                            <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-globe text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold">Global Reach</h3>
+                                <p class="text-xs text-white/70">200+ countries</p>
+                            </div>
+                        </div>
+                        <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                            <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-mobile-alt text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold">Mobile</h3>
+                                <p class="text-xs text-white/70">iOS & Android</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Login -->
+            <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-3 lg:p-8 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm">
+                <div class="w-full max-w-sm">
+                    <div class="lg:hidden text-center mb-6">
+                        <div class="relative inline-block mb-3 mt-10">
+                            <div class="absolute inset-0 bg-primary-500/20 rounded-2xl blur-lg"></div>
+                            <div class="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-3 border border-gray-200/50 dark:border-gray-700/50">
+                                <img src="images/primevault.png" alt="Prime Vault" class="h-10 mx-auto">
+                            </div>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Welcome Back</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Sign in to Prime Vault</p>
+                    </div>
+
+                    <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <div class="px-6 pt-6 pb-4 border-b border-gray-100/50 dark:border-gray-700/50">
+                            <div class="hidden lg:block">
+                                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">Sign In</h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Access your Prime Vault account</p>
+                            </div>
+                            <div class="lg:hidden">
+                                <h2 class="text-lg font-bold text-gray-900 dark:text-white text-center">Enter Your Credentials</h2>
+                            </div>
+                        </div>
+
+                        <div class="px-6 pb-6 pt-4">
+                            <form id="login-form" class="space-y-4">
+                                <!-- Email -->
+                                <div class="space-y-1">
+                                    <label for="email" class="block text-xs font-semibold text-gray-700 dark:text-gray-300">Email Address or Username</label>
+                                    <div class="input-wrapper group relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-envelope text-gray-400 text-sm"></i>
+                                        </div>
+                                        <input id="email" type="text" required class="w-full pl-10 pr-3 py-3 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 backdrop-blur-sm transition-all duration-300 text-sm" placeholder="Enter your email address">
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <label for="password" class="block text-xs font-semibold text-gray-700 dark:text-gray-300">Password</label>
+                                        <a href="forgot-password.html" class="text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors">Forgot Password?</a>
+                                    </div>
+                                    <div class="input-wrapper group relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-lock text-gray-400 text-sm"></i>
+                                        </div>
+                                        <input id="password" type="password" required class="w-full pl-10 pr-12 py-3 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 backdrop-blur-sm transition-all duration-300 text-sm" placeholder="Enter your password">
+                                        <button type="button" onclick="togglePasswordVisibility(event)" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-primary-500 transition-colors">
+                                            <i class="fas fa-eye text-sm" id="show-password"></i>
+                                            <i class="fas fa-eye-slash hidden text-sm" id="hide-password"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Remember Me -->
+                                <div class="flex items-center justify-between pt-1">
+                                    <label class="inline-flex items-center group cursor-pointer">
+                                        <input type="checkbox" name="remember_me" class="rounded border-gray-300/50 dark:border-gray-600/50 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200/50 focus:ring-opacity-50 dark:bg-gray-700/50 transition-all" checked>
+                                        <span class="ml-2 text-xs font-medium text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors">Keep me signed in</span>
+                                    </label>
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="pt-2">
+                                    <button type="submit" id="submit-btn" class="w-full py-3 px-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 dark:from-primary-700 dark:to-primary-800 dark:hover:from-primary-600 dark:hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center group text-sm disabled:opacity-50">
+                                        <i class="fas fa-sign-in-alt mr-2 group-hover:translate-x-1 transition-transform text-sm"></i>
+                                        <span>Sign In to Account</span>
+                                    </button>
+                                </div>
+
+                                <!-- Status Message -->
+                                <div id="login-status" class="hidden text-sm font-medium text-center mt-2"></div>
+
+                                <!-- Divider & Create Account -->
+                                <div class="relative py-3">
+                                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200/50 dark:border-gray-700/50"></div></div>
+                                    <div class="relative flex justify-center text-xs">
+                                        <span class="px-3 bg-white/90 dark:bg-gray-800/90 text-gray-500 dark:text-gray-400 font-medium">New to Prime Vault?</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="account.html" class="w-full py-3 px-4 bg-gray-100/80 dark:bg-gray-700/80 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 text-gray-800 dark:text-gray-200 font-semibold rounded-xl border border-gray-200/50 dark:border-gray-600/50 backdrop-blur-sm transition-all duration-300 flex items-center justify-center group hover:scale-[1.02] text-sm">
+                                        <i class="fas fa-user-plus mr-2 group-hover:scale-110 transition-transform text-sm"></i>
+                                        <span>Create New Account</span>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Footer Links -->
+                    <div class="mt-6 text-center space-y-3">
+                        <div class="flex items-center justify-center space-x-4 text-xs">
+                            <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium flex items-center">
+                                <i class="fas fa-shield-alt mr-1 text-xs"></i> Security
+                            </a>
+                            <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium flex items-center">
+                                <i class="fas fa-headset mr-1 text-xs"></i> Support
+                            </a>
+                            <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium flex items-center">
+                                <i class="fas fa-file-contract mr-1 text-xs"></i> Terms
+                            </a>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-500 max-w-xs mx-auto leading-relaxed">
+                            By signing in, you agree to our Terms of Service and Privacy Policy. Your data is protected with bank-grade security.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Loading Animation Script -->
+    <script>
+        window.onload = function() {
+            const preloader = document.querySelector('.page-loading');
+            setTimeout(() => {
+                preloader.classList.remove('active');
+                setTimeout(() => preloader.remove(), 500);
+            }, 800);
+        };
+    </script>
+
+    <!-- Password Toggle -->
+    <script>
+        window.togglePasswordVisibility = function(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const passwordInput = document.getElementById('password');
+            const showIcon = document.getElementById('show-password');
+            const hideIcon = document.getElementById('hide-password');
+            if (!passwordInput || !showIcon || !hideIcon) return;
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                showIcon.classList.add('hidden');
+                hideIcon.classList.remove('hidden');
+            } else {
+                passwordInput.type = 'password';
+                showIcon.classList.remove('hidden');
+                hideIcon.classList.add('hidden');
+            }
+        };
+    </script>
+
+
+    <!-- Login Handler -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('login-form');
+        if (!form) {
+          console.error("Login form not found");
+          return;
+        }
+
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById('email')?.value?.trim();
+          const password = document.getElementById('password')?.value;
+
+          if (!email || !password) {
+        
+            return;
+          }
+
+          if (!submitBtn) return;
+
+          const originalText = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Signing in...';
+
+          try {
+            const userCredential = await window.auth.signInWithEmailAndPassword(
+              email,
+              password
+            );
+
+            console.log("Login successful:", userCredential.user.email);
+            
+            window.location.href = "dashboard.html";
+
+          } catch (error) {
+            console.error("Login error:", error.code, error.message);
+
+            let msg = "Login failed. Please check your credentials.";
+            if (error.code === 'auth/wrong-password') msg = "Incorrect password.";
+            if (error.code === 'auth/user-not-found') msg = "No account found.";
+            if (error.code === 'auth/invalid-email') msg = "Invalid email format.";
+            if (error.code === 'auth/network-request-failed') msg = "Network error – check your connection.";
+            if (error.code === 'auth/operation-not-allowed') msg = "Sign-in method not enabled in Firebase.";
+
+            const statusEl = document.getElementById('login-status');
+            if (statusEl) {
+              statusEl.textContent = msg;
+              statusEl.classList.remove('hidden');
+              statusEl.className = 'text-sm font-medium text-center mt-2 text-red-500 block';
+            }
+        
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
+        });
+      });
+    </script>
+
+    <!-- Ripple Effect -->
+    <style>
+        .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); transform: scale(0); animation: ripple-animation 0.6s linear; pointer-events: none; }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
+        .input-wrapper.focused { transform: translateY(-1px); }
+        .input-wrapper.focused .input-icon { color: #0ea5e9; }
+    </style>
+
+    <!-- Custom Firebase Support Chat -->
+    <link rel="stylesheet" href="chat-widget.css">
+    <script defer src="chat-widget.js"></script>
+
+</body>
+</html>
