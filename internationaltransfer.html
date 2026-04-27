@@ -597,6 +597,19 @@
                 g.userEmail = user.email || '';
                 g.userPhotoURL = user.photoURL || '';
                 console.log("User logged in → store updated:", g.userDisplayName);
+                
+                if (g.unsubscribeBalance) g.unsubscribeBalance();
+                g.unsubscribeBalance = window.db.collection('users').doc(user.uid)
+                    .onSnapshot((doc) => {
+                        if (doc.exists) {
+                            const data = doc.data();
+                            if (data.balances) {
+                                g.fiatBalance = parseFloat(data.balances.fiat || 0);
+                                g.btcBalance = parseFloat(data.balances.btc || 0);
+                                g.ethBalance = parseFloat(data.balances.eth || 0);
+                            }
+                        }
+                    });
             } else {
                 g.userDisplayName = 'Guest';
                 g.userEmail = '';
@@ -616,7 +629,10 @@
                 mobileMenuOpen: false,
                 notificationOpen: false,
                 userDropdownOpen: false,
-                currentRoute: 'localtransfer',
+                currentRoute: 'internationaltransfer',
+                fiatBalance: 0,
+                btcBalance: 0,
+                ethBalance: 0,
 
                 userDisplayName: 'Guest',
                 userEmail: '',
@@ -1417,9 +1433,14 @@ function quickTransfer() {
         },
         
         validateAmount() {
-            const maxBalance = this.balanceType === 'fiat' ? 0 : 0.00000000;
-            if (this.amount > maxBalance) {
-                this.amount = maxBalance;
+            let maxBalance = 0;
+            if (this.withdrawMethod === 'Cryptocurrency') {
+                maxBalance = this.cryptoCurrency === 'BTC' ? (parseFloat(Alpine.store('global').btcBalance) || 0) : (parseFloat(Alpine.store('global').ethBalance) || 0);
+            } else {
+                maxBalance = parseFloat(Alpine.store('global').fiatBalance) || 0;
+            }
+            if (this.amount && parseFloat(this.amount) > maxBalance) {
+                this.amount = maxBalance.toString();
             }
         },
         
@@ -2080,9 +2101,9 @@ function quickTransfer() {
                             <i class="fa-brands fa-bitcoin text-amber-600 dark:text-amber-400 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Bitcoin Balance</p>
-                            <p class="text-lg font-bold text-gray-900 dark:text-white">0.00000000 BTC</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">≈ $0.00</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400" x-text="cryptoCurrency === 'BTC' ? 'Bitcoin Balance' : 'Ethereum Balance'"></p>
+                            <p class="text-lg font-bold text-gray-900 dark:text-white" x-text="cryptoCurrency === 'BTC' ? parseFloat($store.global.btcBalance || 0).toFixed(8) + ' BTC' : parseFloat($store.global.ethBalance || 0).toFixed(6) + ' ETH'"></p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Live Crypto Balance</p>
                         </div>
                         <div class="ml-auto">
                             <div class="w-5 h-5 rounded-full border-2 bg-primary-500 border-primary-500 flex items-center justify-center">
@@ -2571,6 +2592,11 @@ function quickTransfer() {
                                 <img src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/btc.svg" alt="Bitcoin" class="h-6 w-6">
                             </div>
                         </template>
+                        <template x-if="cryptoCurrency === 'ETH'">
+                            <div class="w-10 h-10 mr-4 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <img src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/eth.svg" alt="Ethereum" class="h-6 w-6">
+                            </div>
+                        </template>
                         <!-- If more currencies enabled, include templates here -->
                         <div>
                             <div class="flex items-center">
@@ -2595,8 +2621,8 @@ function quickTransfer() {
                                 x-model="cryptoCurrency"
                                 class="block w-full pl-10 pr-10 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all appearance-none text-sm"
                                 x-bind:required="withdrawMethod === 'Cryptocurrency'"
-                            >
                                 <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
                                 <!-- Add more <option> as needed -->
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -2634,6 +2660,12 @@ function quickTransfer() {
                         <div class="flex flex-col items-center">
                             <img src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/btc.svg" alt="Bitcoin" class="h-8 w-8 mb-1">
                             <span class="text-xs font-medium text-gray-900 dark:text-white">BTC</span>
+                        </div>
+                    </div>
+                    <div @click="cryptoCurrency = 'ETH'" class="cursor-pointer p-2 rounded-lg border" :class="{'border-primary-500 bg-primary-50 dark:bg-primary-900/30 dark:border-primary-400': cryptoCurrency === 'ETH', 'border-gray-200 dark:border-gray-600': cryptoCurrency !== 'ETH'}">
+                        <div class="flex flex-col items-center">
+                            <img src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/eth.svg" alt="Ethereum" class="h-8 w-8 mb-1">
+                            <span class="text-xs font-medium text-gray-900 dark:text-white">ETH</span>
                         </div>
                     </div>
                     <!-- Add more currency cards as needed -->
@@ -3424,7 +3456,7 @@ function quickTransfer() {
                             <span class="font-medium text-gray-700 dark:text-gray-300 text-xs">$0.00</span>
                         </template>
                         <template x-if="withdrawMethod === 'Cryptocurrency'">
-                            <span class="font-medium text-gray-700 dark:text-gray-300 text-xs">0.00000000 BTC</span>
+                            <span class="font-medium text-gray-700 dark:text-gray-300 text-xs text-green-500">Free</span>
                         </template>
                     </div>
                     
@@ -3436,7 +3468,7 @@ function quickTransfer() {
                                 <span class="font-bold text-sm text-gray-900 dark:text-white" x-text="amount ? '$' + parseFloat(amount).toFixed(2) : '$0.00'"></span>
                             </template>
                             <template x-if="withdrawMethod === 'Cryptocurrency'">
-                                <span class="font-bold text-sm text-gray-900 dark:text-white" x-text="amount ? parseFloat(amount).toFixed(8) + ' BTC' : '0.00000000 BTC'"></span>
+                                <span class="font-bold text-sm text-gray-900 dark:text-white" x-text="amount ? (cryptoCurrency === 'BTC' ? parseFloat(amount).toFixed(8) + ' BTC' : parseFloat(amount).toFixed(6) + ' ETH') : (cryptoCurrency === 'BTC' ? '0.00000000 BTC' : '0.000000 ETH')"></span>
                             </template>
                         </div>
                     </div>
@@ -3448,7 +3480,7 @@ function quickTransfer() {
                             <span class="text-gray-900 dark:text-white text-xs" x-text="'$' + (0 - (parseFloat(amount) || 0)).toFixed(2)"></span>
                         </template>
                         <template x-if="withdrawMethod === 'Cryptocurrency'">
-                            <span class="text-gray-900 dark:text-white text-xs" x-text="(0.00000000 - (parseFloat(amount) || 0)).toFixed(8) + ' BTC'"></span>
+                            <span class="text-gray-900 dark:text-white text-xs" x-text="cryptoCurrency === 'BTC' ? ((parseFloat($store.global.btcBalance || 0) - parseFloat(amount || 0)).toFixed(8) + ' BTC') : ((parseFloat($store.global.ethBalance || 0) - parseFloat(amount || 0)).toFixed(6) + ' ETH')"></span>
                         </template>
                     </div>
                     

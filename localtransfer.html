@@ -2096,19 +2096,19 @@
                                 <span class="font-semibold text-gray-900 dark:text-white" x-text="$store.global.Accounttype"></span>
                             </div>
                             
-                            <div class="flex justify-between items-center" x-show="$store.global.routing_number && routing_number.trim() !== ''">
+                            <div class="flex justify-between items-center" x-show="$store.global.routing_number && $store.global.routing_number.trim() !== ''">
                                 <span class="text-gray-600 dark:text-gray-400 font-medium">Routing Number</span>
-                                <span class="font-semibold text-gray-900 dark:text-white font-mono" x-text="routing_number"></span>
+                                <span class="font-semibold text-gray-900 dark:text-white font-mono" x-text="$store.global.routing_number"></span>
                             </div>
                             
-                            <div class="flex justify-between items-center" x-show="$store.global.swift_code && swift_code.trim() !== ''">
+                            <div class="flex justify-between items-center" x-show="$store.global.swift_code && $store.global.swift_code.trim() !== ''">
                                 <span class="text-gray-600 dark:text-gray-400 font-medium">SWIFT Code</span>
-                                <span class="font-semibold text-gray-900 dark:text-white font-mono" x-text="swift_code"></span>
+                                <span class="font-semibold text-gray-900 dark:text-white font-mono" x-text="$store.global.swift_code"></span>
                             </div>
                             
-                            <div class="flex justify-between items-center" x-show="$store.global.Description && Description.trim() !== ''">
+                            <div class="flex justify-between items-center" x-show="$store.global.Description && $store.global.Description.trim() !== ''">
                                 <span class="text-gray-600 dark:text-gray-400 font-medium">Description</span>
-                                <span class="font-semibold text-gray-900 dark:text-white" x-text="Description"></span>
+                                <span class="font-semibold text-gray-900 dark:text-white" x-text="$store.global.Description"></span>
                             </div>
                             
                             <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
